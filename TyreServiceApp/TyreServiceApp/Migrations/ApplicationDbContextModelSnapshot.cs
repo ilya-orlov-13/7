@@ -30,6 +30,9 @@ namespace TyreServiceApp.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CarId"));
 
+                    b.Property<string>("AdditionalPhotos")
+                        .HasColumnType("text");
+
                     b.Property<string>("Brand")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -197,7 +200,8 @@ namespace TyreServiceApp.Migrations
 
                     b.Property<string>("ServiceName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("ServiceCode");
 

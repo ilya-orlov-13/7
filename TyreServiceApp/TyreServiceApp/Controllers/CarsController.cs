@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ namespace TyreServiceApp.Controllers
     /// Контроллер для управления автомобилями в системе шиномонтажа.
     /// Обеспечивает CRUD-операции для сущности Car, включая загрузку фотографий.
     /// </summary>
+    [Authorize]
     public class CarsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -103,14 +105,35 @@ namespace TyreServiceApp.Controllers
         // POST: Cars/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClientId,Brand,Model,ManufactureYear,LicensePlate,Vin,PhotoFile")] Car car)
+        public async Task<IActionResult> Create([Bind("ClientId,Brand,Model,ManufactureYear,LicensePlate,Vin")] Car car, List<IFormFile> photos)
         {
             if (ModelState.IsValid)
             {
                 // Обработка загрузки фото
-                if (car.PhotoFile != null && car.PhotoFile.Length > 0)
+                if (photos != null && photos.Count > 0)
                 {
-                    car.PhotoPath = await SavePhotoAsync(car.PhotoFile);
+                    var photoPaths = new List<string>();
+                    
+                    foreach (var photo in photos)
+                    {
+                        if (photo != null && photo.Length > 0)
+                        {
+                            var photoPath = await SavePhotoAsync(photo);
+                            photoPaths.Add(photoPath);
+                        }
+                    }
+                    
+                    if (photoPaths.Count > 0)
+                    {
+                        // Первое фото как основное
+                        car.PhotoPath = photoPaths[0];
+                        
+                        // Остальные как дополнительные
+                        if (photoPaths.Count > 1)
+                        {
+                            car.AdditionalPhotos = System.Text.Json.JsonSerializer.Serialize(photoPaths.Skip(1).ToList());
+                        }
+                    }
                 }
                 
                 _context.Add(car);
@@ -166,7 +189,7 @@ namespace TyreServiceApp.Controllers
         // POST: Cars/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CarId,ClientId,Brand,Model,ManufactureYear,LicensePlate,Vin,PhotoFile")] Car car)
+        public async Task<IActionResult> Edit(int id, [Bind("CarId,ClientId,Brand,Model,ManufactureYear,LicensePlate,Vin,PhotoPath,AdditionalPhotos")] Car car, List<IFormFile> photos, string? removedPhotos)
         {
             if (id != car.CarId)
             {
@@ -177,15 +200,80 @@ namespace TyreServiceApp.Controllers
             {
                 try
                 {
-                    // Обработка загрузки фото при редактировании
-                    if (car.PhotoFile != null && car.PhotoFile.Length > 0)
+                    // Получаем текущие данные из базы
+                    var existingCar = await _context.Cars.AsNoTracking().FirstOrDefaultAsync(c => c.CarId == id);
+                    
+                    // Обрабатываем удаленные фото
+                    var photosToRemove = new List<string>();
+                    if (!string.IsNullOrEmpty(removedPhotos))
                     {
-                        // Удаляем старое фото, если есть
-                        if (!string.IsNullOrEmpty(car.PhotoPath))
+                        photosToRemove = System.Text.Json.JsonSerializer.Deserialize<List<string>>(removedPhotos) ?? new List<string>();
+                        
+                        // Удаляем файлы с диска
+                        foreach (var photoPath in photosToRemove)
                         {
-                            DeletePhoto(car.PhotoPath);
+                            DeletePhoto(photoPath);
                         }
-                        car.PhotoPath = await SavePhotoAsync(car.PhotoFile);
+                    }
+                    
+                    // Получаем текущие фото, исключая удаленные
+                    var currentPhotos = new List<string>();
+                    
+                    // Добавляем основное фото, если оно не удалено
+                    if (!string.IsNullOrEmpty(existingCar?.PhotoPath) && !photosToRemove.Contains(existingCar.PhotoPath))
+                    {
+                        currentPhotos.Add(existingCar.PhotoPath);
+                    }
+                    
+                    // Добавляем дополнительные фото, исключая удаленные
+                    if (!string.IsNullOrEmpty(existingCar?.AdditionalPhotos))
+                    {
+                        try
+                        {
+                            var existingAdditionalPhotos = System.Text.Json.JsonSerializer.Deserialize<List<string>>(existingCar.AdditionalPhotos);
+                            if (existingAdditionalPhotos != null)
+                            {
+                                currentPhotos.AddRange(existingAdditionalPhotos.Where(p => !photosToRemove.Contains(p)));
+                            }
+                        }
+                        catch
+                        {
+                            // Игнорируем ошибки десериализации
+                        }
+                    }
+                    
+                    // Добавляем новые загруженные фото
+                    if (photos != null && photos.Count > 0)
+                    {
+                        foreach (var photo in photos)
+                        {
+                            if (photo != null && photo.Length > 0)
+                            {
+                                var photoPath = await SavePhotoAsync(photo);
+                                currentPhotos.Add(photoPath);
+                            }
+                        }
+                    }
+                    
+                    // Устанавливаем фото в модель
+                    if (currentPhotos.Count > 0)
+                    {
+                        car.PhotoPath = currentPhotos[0]; // Первое фото как основное
+                        
+                        if (currentPhotos.Count > 1)
+                        {
+                            car.AdditionalPhotos = System.Text.Json.JsonSerializer.Serialize(currentPhotos.Skip(1).ToList());
+                        }
+                        else
+                        {
+                            car.AdditionalPhotos = null;
+                        }
+                    }
+                    else
+                    {
+                        // Если фото нет, очищаем поля
+                        car.PhotoPath = null;
+                        car.AdditionalPhotos = null;
                     }
                     
                     _context.Update(car);
@@ -312,10 +400,23 @@ namespace TyreServiceApp.Controllers
             var car = await _context.Cars.FindAsync(id);
             if (car != null)
             {
-                // Удаляем фото при удалении автомобиля
+                // Удаляем основное фото
                 if (!string.IsNullOrEmpty(car.PhotoPath))
                 {
                     DeletePhoto(car.PhotoPath);
+                }
+                
+                // Удаляем дополнительные фото
+                if (!string.IsNullOrEmpty(car.AdditionalPhotos))
+                {
+                    var additionalPhotos = System.Text.Json.JsonSerializer.Deserialize<List<string>>(car.AdditionalPhotos);
+                    if (additionalPhotos != null)
+                    {
+                        foreach (var photo in additionalPhotos)
+                        {
+                            DeletePhoto(photo);
+                        }
+                    }
                 }
                 
                 _context.Cars.Remove(car);

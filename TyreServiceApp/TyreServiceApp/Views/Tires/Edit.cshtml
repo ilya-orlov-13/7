@@ -4,107 +4,476 @@
     ViewData["Title"] = "Редактировать шину";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-10 col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Редактировать шину</h5>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #000000;
+        --button_color: #e8e8e8;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 0rem;
+        cursor: default;
+        transition: max-width 0.3s ease;
+    }
+
+    @@media (min-width: 992px) {
+        .main-3d-wrapper {
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 30px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Стили для форм */
+    .modern-form-group {
+        margin-bottom: 20px;
+    }
+
+    .modern-form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .modern-form-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background-color: #fff;
+    }
+
+    .modern-form-input:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 14px;
+        background-color: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .modern-form-select:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .modern-btn-primary {
+        background-color: #000000;
+        color: white;
+    }
+
+    .modern-btn-primary:hover {
+        background-color: #333333;
+        transform: translateY(-1px);
+    }
+
+    .modern-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .modern-btn-secondary:hover {
+        background-color: #545b62;
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .validation-error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    /* Стили для предпросмотра автомобиля */
+    .car-preview-card {
+        border: 2px solid #e1e5e9;
+        border-radius: 12px;
+        background: #f8f9fa;
+        padding: 20px;
+        margin: 20px 0;
+        display: none;
+    }
+
+    .car-preview-card.active {
+        display: block;
+    }
+
+    .car-preview-header {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .car-preview-image {
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+
+    .car-preview-info h5 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #212529;
+        margin-bottom: 8px;
+    }
+
+    .car-preview-details {
+        color: #6c757d;
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .car-preview-meta {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    /* Стили для select2 */
+    .select2-container--default .select2-selection--single {
+        border: 2px solid #e1e5e9 !important;
+        border-radius: 8px !important;
+        height: 48px !important;
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+    }
+
+    .select2-container--default .select2-selection--single:focus {
+        border-color: #000000 !important;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .select2-container--default .select2-results__option {
+        padding: 8px;
+    }
+
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #000000 !important;
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
+            
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0">
+                    Редактировать шину
+                </h3>
             </div>
-            <div class="card-body">
-                <form asp-action="Edit">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-                    <input type="hidden" asp-for="TireId" />
-                    
-                    <div class="mb-3">
-                        <label asp-for="CarId" class="form-label fw-semibold">
-                            <i class="bi bi-car-front text-dark"></i> Автомобиль
-                        </label>
-                        <select asp-for="CarId" class="form-select" asp-items="ViewBag.CarId">
-                            <option value="">-- Выберите автомобиль --</option>
-                        </select>
-                        <span asp-validation-for="CarId" class="text-danger small"></span>
+
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="alert-danger" role="alert"></div>
+                <input type="hidden" asp-for="TireId" />
+                
+                <div class="modern-form-group">
+                    <label asp-for="CarId" class="modern-form-label">
+                        <i class="bi bi-car-front me-1"></i> Автомобиль
+                    </label>
+                    <select asp-for="CarId" 
+                            class="modern-form-select car-select"
+                            asp-items="ViewBag.CarId"
+                            id="carSelect">
+                        <option value="">-- Выберите автомобиль --</option>
+                    </select>
+                    <span asp-validation-for="CarId" class="validation-error"></span>
+                </div>
+                
+                <!-- Предпросмотр фото автомобиля -->
+                <div id="carPhotoPreview" class="car-preview-card">
+                    <div class="car-preview-header">
+                        <i class="bi bi-eye me-1"></i> Выбранный автомобиль
                     </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="TireType" class="form-label fw-semibold">
-                                <i class="bi bi-tag text-dark"></i> Тип шины
-                            </label>
-                            <input asp-for="TireType" class="form-control" placeholder="Например: Легковая" />
-                            <span asp-validation-for="TireType" class="text-danger small"></span>
+                    <div class="row align-items-center">
+                        <div class="col-md-4 text-center">
+                            <img id="previewImage" src="" 
+                                 class="img-fluid car-preview-image" 
+                                 alt="Фото автомобиля" />
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Seasonality" class="form-label fw-semibold">
-                                <i class="bi bi-snow text-dark"></i> Сезонность
-                            </label>
-                            <input asp-for="Seasonality" class="form-control" placeholder="Летняя, Зимняя, Всесезонная" />
-                            <span asp-validation-for="Seasonality" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Manufacturer" class="form-label fw-semibold">
-                                <i class="bi bi-building text-dark"></i> Производитель
-                            </label>
-                            <input asp-for="Manufacturer" class="form-control" placeholder="Например: Michelin" />
-                            <span asp-validation-for="Manufacturer" class="text-danger small"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="TireModel" class="form-label fw-semibold">
-                                <i class="bi bi-tag text-dark"></i> Модель шины
-                            </label>
-                            <input asp-for="TireModel" class="form-control" placeholder="Модель шины" />
-                            <span asp-validation-for="TireModel" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="Size" class="form-label fw-semibold">
-                                <i class="bi bi-rulers text-dark"></i> Размер
-                            </label>
-                            <input asp-for="Size" class="form-control" placeholder="225/55 R17" />
-                            <span asp-validation-for="Size" class="text-danger small"></span>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="LoadIndex" class="form-label fw-semibold">
-                                <i class="bi bi-arrow-up text-dark"></i> Индекс нагрузки
-                            </label>
-                            <input asp-for="LoadIndex" class="form-control" type="number" placeholder="91" />
-                            <span asp-validation-for="LoadIndex" class="text-danger small"></span>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="WearPercentage" class="form-label fw-semibold">
-                                <i class="bi bi-speedometer text-dark"></i> Износ (%)
-                            </label>
-                            <input asp-for="WearPercentage" class="form-control" type="number" placeholder="0-100" />
-                            <span asp-validation-for="WearPercentage" class="text-danger small"></span>
+                        <div class="col-md-8">
+                            <h5 id="carInfo" class="car-preview-info"></h5>
+                            <p id="carDetails" class="car-preview-details"></p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="car-preview-meta">
+                                        <i class="bi bi-person me-1"></i>
+                                        <span id="carClient"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="car-preview-meta">
+                                        <i class="bi bi-upc me-1"></i>
+                                        <span id="carVin"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label asp-for="Pressure" class="form-label fw-semibold">
-                            <i class="bi bi-droplet text-dark"></i> Давление
-                        </label>
-                        <input asp-for="Pressure" class="form-control" type="number" step="0.1" placeholder="2.5" />
-                        <span asp-validation-for="Pressure" class="text-danger small"></span>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="modern-form-group">
+                            <label asp-for="TireType" class="modern-form-label">
+                                <i class="bi bi-tag me-1"></i> Тип шины
+                            </label>
+                            <input asp-for="TireType" class="modern-form-input" placeholder="Например: Легковая" />
+                            <span asp-validation-for="TireType" class="validation-error"></span>
+                        </div>
                     </div>
-                    
-                    <div class="d-flex gap-2 mt-4">
-                        <button type="submit" class="btn btn-dark">
-                            <i class="bi bi-save"></i> Сохранить изменения
-                        </button>
-                        <a asp-action="Index" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Вернуться к списку
-                        </a>
+                    <div class="col-md-6">
+                        <div class="modern-form-group">
+                            <label asp-for="Seasonality" class="modern-form-label">
+                                <i class="bi bi-snow me-1"></i> Сезонность
+                            </label>
+                            <input asp-for="Seasonality" class="modern-form-input" placeholder="Летняя, Зимняя, Всесезонная" />
+                            <span asp-validation-for="Seasonality" class="validation-error"></span>
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="modern-form-group">
+                            <label asp-for="Manufacturer" class="modern-form-label">
+                                <i class="bi bi-building me-1"></i> Производитель
+                            </label>
+                            <input asp-for="Manufacturer" class="modern-form-input" placeholder="Например: Michelin" />
+                            <span asp-validation-for="Manufacturer" class="validation-error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="modern-form-group">
+                            <label asp-for="TireModel" class="modern-form-label">
+                                <i class="bi bi-tag me-1"></i> Модель шины
+                            </label>
+                            <input asp-for="TireModel" class="modern-form-input" placeholder="Модель шины" />
+                            <span asp-validation-for="TireModel" class="validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="modern-form-group">
+                            <label asp-for="Size" class="modern-form-label">
+                                <i class="bi bi-rulers me-1"></i> Размер
+                            </label>
+                            <input asp-for="Size" class="modern-form-input" placeholder="225/55 R17" />
+                            <span asp-validation-for="Size" class="validation-error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="modern-form-group">
+                            <label asp-for="LoadIndex" class="modern-form-label">
+                                <i class="bi bi-arrow-up me-1"></i> Индекс нагрузки
+                            </label>
+                            <input asp-for="LoadIndex" class="modern-form-input" type="number" placeholder="91" />
+                            <span asp-validation-for="LoadIndex" class="validation-error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="modern-form-group">
+                            <label asp-for="WearPercentage" class="modern-form-label">
+                                <i class="bi bi-speedometer me-1"></i> Износ (%)
+                            </label>
+                            <input asp-for="WearPercentage" class="modern-form-input" type="number" placeholder="0-100" />
+                            <span asp-validation-for="WearPercentage" class="validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modern-form-group">
+                    <label asp-for="Pressure" class="modern-form-label">
+                        <i class="bi bi-droplet me-1"></i> Давление
+                    </label>
+                    <input asp-for="Pressure" class="modern-form-input" type="number" step="0.1" placeholder="2.5" />
+                    <span asp-validation-for="Pressure" class="validation-error"></span>
+                </div>
+                
+                <!-- Кнопки действий -->
+                <div class="d-flex gap-2 mt-4 pt-2">
+                    <button type="submit" class="btn btn-dark px-4">
+                        <i class="bi bi-check-lg"></i> Сохранить изменения
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-x-lg"></i> Отмена
+                    </a>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Данные автомобилей с фото
+        var carsData = @Html.Raw(Json.Serialize(ViewBag.CarsData));
+        
+        // Обработчик изменения выбора автомобиля
+        document.getElementById('CarId').addEventListener('change', function() {
+            var carId = parseInt(this.value);
+            var previewDiv = document.getElementById('carPhotoPreview');
+            var previewImage = document.getElementById('previewImage');
+            var carInfo = document.getElementById('carInfo');
+            var carDetails = document.getElementById('carDetails');
+            var carClient = document.getElementById('carClient');
+            var carVin = document.getElementById('carVin');
+            
+            if (carId) {
+                // Находим данные выбранного автомобиля
+                var selectedCar = carsData.find(function(car) {
+                    return car.carId === carId;
+                });
+                
+                if (selectedCar) {
+                    // Отображаем фото, если есть
+                    if (selectedCar.photoPath && selectedCar.photoPath.length > 0) {
+                        previewImage.src = selectedCar.photoPath;
+                        previewImage.style.display = 'block';
+                    } else {
+                        previewImage.style.display = 'none';
+                    }
+                    
+                    // Отображаем информацию
+                    carInfo.textContent = selectedCar.brand + ' ' + selectedCar.model;
+                    carDetails.textContent = 'Госномер: ' + selectedCar.licensePlate;
+                    carClient.textContent = selectedCar.clientName;
+                    carVin.textContent = selectedCar.vin;
+                    
+                    // Показываем блок предпросмотра
+                    previewDiv.classList.add('active');
+                } else {
+                    previewDiv.classList.remove('active');
+                }
+            } else {
+                previewDiv.classList.remove('active');
+            }
+        });
+    </script>
+    
+    <!-- Подключение select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <script>
+        // Инициализация select2 для выбора автомобиля
+        $(document).ready(function() {
+            $('.car-select').select2({
+                placeholder: "Выберите автомобиль",
+                allowClear: true,
+                templateResult: formatCarOption,
+                templateSelection: formatCarSelection
+            }).on('change', function() {
+                var event = new Event('change');
+                this.dispatchEvent(event);
+            });
+            
+            // Показываем предпросмотр для уже выбранного автомобиля при загрузке страницы
+            if ($('#CarId').val()) {
+                var event = new Event('change');
+                document.getElementById('CarId').dispatchEvent(event);
+            }
+        });
+        
+        function formatCarOption(car) {
+            if (!car.id) return car.text;
+            
+            var carId = parseInt(car.id);
+            var carData = carsData.find(function(c) {
+                return c.carId === carId;
+            });
+            
+            if (!carData) return car.text;
+            
+            var $option = $(
+                '<div class="d-flex align-items-center">' +
+                    '<div class="me-3" style="width: 40px;">' +
+                        (carData.photoPath && carData.photoPath.length > 0 ? 
+                            `<img src="${carData.photoPath}" class="rounded" style="width: 40px; height: 30px; object-fit: cover;">` :
+                            `<div class="text-center text-muted"><i class="bi bi-car-front"></i></div>`) +
+                    '</div>' +
+                    '<div>' +
+                        `<strong>${carData.brand} ${carData.model}</strong><br>` +
+                        `<small class="text-muted">${carData.licensePlate} | ${carData.clientName}</small>` +
+                    '</div>' +
+                '</div>'
+            );
+            
+            return $option;
+        }
+        
+        function formatCarSelection(car) {
+            if (!car.id) return car.text;
+            
+            var carId = parseInt(car.id);
+            var carData = carsData.find(function(c) {
+                return c.carId === carId;
+            });
+            
+            if (!carData) return car.text;
+            
+            return `${carData.brand} ${carData.model} (${carData.licensePlate})`;
+        }
+    </script>
 }

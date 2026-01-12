@@ -34,6 +34,16 @@ namespace TyreServiceApp.Models
         public string? PhotoPath { get; set; }
         
         /// <summary>
+        /// Список путей к дополнительным фотографиям автомобиля.
+        /// </summary>
+        /// <value>
+        /// Строка JSON, содержащая массив путей к дополнительным изображениям.
+        /// Может быть null, если дополнительные фотографии не загружены.
+        /// </value>
+        [Display(Name = "Дополнительные фото")]
+        public string? AdditionalPhotos { get; set; }
+        
+        /// <summary>
         /// Файл фотографии автомобиля для загрузки.
         /// </summary>
         /// <value>
@@ -48,6 +58,18 @@ namespace TyreServiceApp.Models
         [NotMapped]
         [Display(Name = "Загрузить фото")]
         public IFormFile? PhotoFile { get; set; }
+
+        /// <summary>
+        /// Коллекция файлов дополнительных фотографий для загрузки.
+        /// </summary>
+        /// <value>
+        /// Коллекция объектов IFormFile, представляющих загружаемые файлы изображений.
+        /// Не сохраняется в базе данных (атрибут [NotMapped]).
+        /// Используется только при передаче файлов через форму.
+        /// </value>
+        [NotMapped]
+        [Display(Name = "Дополнительные фото")]
+        public ICollection<IFormFile>? AdditionalPhotoFiles { get; set; }
 
         /// <summary>
         /// Идентификатор владельца автомобиля (клиента).
@@ -108,8 +130,8 @@ namespace TyreServiceApp.Models
         [Required(ErrorMessage = "Госномер обязателен")]
         [StringLength(20, ErrorMessage = "Госномер не может превышать 20 символов")]
         [Display(Name = "Госномер")]
-        [RegularExpression(@"^[АВЕКМНОРСТУХ]\d{3}[АВЕКМНОРСТУХ]{2}\d{2,3}$", 
-            ErrorMessage = "Неверный формат госномера. Пример: А123ВС777")]
+        [RegularExpression(@"^[А-Я]{1}\d{3}[А-Я]{2}\d{2,3}$|^[А-Я]{2}\d{3}\d{2,3}$|^[А-Я]{1}\d{4}[А-Я]{1}\d{2,3}$|^[А-Я]{1}\d{3}[А-Я]{1}\d{2,3}$|^[0-9А-Я\s\-]{3,20}$", 
+            ErrorMessage = "Неверный формат госномера. Примеры: А123ВС777, В456ТР78, М789КЛ199")]
         public string LicensePlate { get; set; } = string.Empty;
         
         /// <summary>

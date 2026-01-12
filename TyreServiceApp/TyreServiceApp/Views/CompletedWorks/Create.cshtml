@@ -4,84 +4,291 @@
     ViewData["Title"] = "Добавить выполненную работу";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-10 col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0"><i class="bi bi-check-circle"></i> Добавить выполненную работу</h5>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #000000;
+        --button_color: #e8e8e8;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 0rem;
+        cursor: default;
+        transition: max-width 0.3s ease;
+    }
+
+    @@media (min-width: 992px) {
+        .main-3d-wrapper {
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 30px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Стили для форм */
+    .modern-form-group {
+        margin-bottom: 20px;
+    }
+
+    .modern-form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .modern-form-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background-color: #fff;
+    }
+
+    .modern-form-input:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 14px;
+        background-color: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .modern-form-select:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .modern-btn-primary {
+        background-color: #000000;
+        color: white;
+    }
+
+    .modern-btn-primary:hover {
+        background-color: #333333;
+        transform: translateY(-1px);
+    }
+
+    .modern-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .modern-btn-secondary:hover {
+        background-color: #545b62;
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .validation-error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
+            
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0">
+                    Добавить выполненную работу
+                </h3>
             </div>
-            <div class="card-body">
-                <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-                    
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="OrderNumber" class="form-label fw-semibold">
-                                <i class="bi bi-receipt text-dark"></i> Номер заказа
+
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert-danger" role="alert"></div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="modern-form-group">
+                            <label asp-for="OrderNumber" class="modern-form-label">
+                                <i class="bi bi-receipt me-1"></i> Номер заказа
                             </label>
-                            <select asp-for="OrderNumber" class="form-select" asp-items="ViewBag.OrderNumber">
+                            <select asp-for="OrderNumber" class="modern-form-select" asp-items="ViewBag.OrderNumber">
                                 <option value="">-- Выберите заказ --</option>
                             </select>
-                            <span asp-validation-for="OrderNumber" class="text-danger small"></span>
+                            <span asp-validation-for="OrderNumber" class="validation-error"></span>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="ServiceCode" class="form-label fw-semibold">
-                                <i class="bi bi-gear text-dark"></i> Услуга
+                    </div>
+                    <div class="col-md-4">
+                        <div class="modern-form-group">
+                            <label asp-for="ServiceCode" class="modern-form-label">
+                                <i class="bi bi-gear me-1"></i> Услуга
                             </label>
-                            <select asp-for="ServiceCode" class="form-select" asp-items="ViewBag.ServiceCode">
+                            <select asp-for="ServiceCode" class="modern-form-select" asp-items="ViewBag.ServiceCode">
                                 <option value="">-- Выберите услугу --</option>
                             </select>
-                            <span asp-validation-for="ServiceCode" class="text-danger small"></span>
+                            <span asp-validation-for="ServiceCode" class="validation-error"></span>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="MasterId" class="form-label fw-semibold">
-                                <i class="bi bi-person-badge text-dark"></i> Мастер
+                    </div>
+                    <div class="col-md-4">
+                        <div class="modern-form-group">
+                            <label asp-for="MasterId" class="modern-form-label">
+                                <i class="bi bi-person-badge me-1"></i> Мастер
                             </label>
-                            <select asp-for="MasterId" class="form-select" asp-items="ViewBag.MasterId">
+                            <select asp-for="MasterId" class="modern-form-select" asp-items="ViewBag.MasterId">
                                 <option value="">-- Выберите мастера --</option>
                             </select>
-                            <span asp-validation-for="MasterId" class="text-danger small"></span>
+                            <span asp-validation-for="MasterId" class="validation-error"></span>
                         </div>
                     </div>
-                    
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="WheelCount" class="form-label fw-semibold">
-                                <i class="bi bi-circle text-dark"></i> Количество колес
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="modern-form-group">
+                            <label asp-for="WheelCount" class="modern-form-label">
+                                <i class="bi bi-circle me-1"></i> Количество колес
                             </label>
-                            <input asp-for="WheelCount" class="form-control" type="number" placeholder="1-4" />
-                            <span asp-validation-for="WheelCount" class="text-danger small"></span>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="CompletionTimeMin" class="form-label fw-semibold">
-                                <i class="bi bi-clock text-dark"></i> Время выполнения (мин)
-                            </label>
-                            <input asp-for="CompletionTimeMin" class="form-control" type="number" placeholder="Минуты" />
-                            <span asp-validation-for="CompletionTimeMin" class="text-danger small"></span>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label asp-for="WorkTotal" class="form-label fw-semibold">
-                                <i class="bi bi-currency-exchange text-dark"></i> Итоговая стоимость
-                            </label>
-                            <input asp-for="WorkTotal" class="form-control" type="number" step="0.01" placeholder="0.00" />
-                            <span asp-validation-for="WorkTotal" class="text-danger small"></span>
+                            <input asp-for="WheelCount" class="modern-form-input" type="number" placeholder="1-4" />
+                            <span asp-validation-for="WheelCount" class="validation-error"></span>
                         </div>
                     </div>
-                    
-                    <div class="d-flex gap-2 mt-4">
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-circle"></i> Создать
-                        </button>
-                        <a asp-action="Index" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Вернуться к списку
-                        </a>
+                    <div class="col-md-4">
+                        <div class="modern-form-group">
+                            <label asp-for="CompletionTimeMin" class="modern-form-label">
+                                <i class="bi bi-clock me-1"></i> Время выполнения (мин)
+                            </label>
+                            <input asp-for="CompletionTimeMin" class="modern-form-input" type="number" placeholder="Минуты" />
+                            <span asp-validation-for="CompletionTimeMin" class="validation-error"></span>
+                        </div>
                     </div>
-                </form>
-            </div>
+                    <div class="col-md-4">
+                        <div class="modern-form-group">
+                            <label asp-for="WorkTotal" class="modern-form-label">
+                                <i class="bi bi-currency-exchange me-1"></i> Итоговая стоимость
+                            </label>
+                            <input asp-for="WorkTotal" class="modern-form-input" type="number" step="0.01" placeholder="0.00" />
+                            <span asp-validation-for="WorkTotal" class="validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Кнопки действий -->
+                <div class="d-flex gap-2 mt-4 pt-2">
+                    <button type="submit" class="btn btn-dark px-4">
+                        <i class="bi bi-check-lg"></i> Сохранить изменения
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-x-lg"></i> Отмена
+                    </a>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Функция для расчета итоговой стоимости
+            function calculateTotal() {
+                var serviceCode = $('#ServiceCode').val();
+                var wheelCount = $('#WheelCount').val() || 1; // По умолчанию 1 колесо
+                
+                console.log('Расчет стоимости:', { serviceCode: serviceCode, wheelCount: wheelCount });
+                
+                if (serviceCode) {
+                    $.get('@Url.Action("GetServiceCost", "CompletedWorks")', { serviceCode: serviceCode })
+                        .done(function(data) {
+                            console.log('Ответ сервера:', data);
+                            if (data.success) {
+                                var total = data.cost * wheelCount;
+                                $('#WorkTotal').val(total.toFixed(2));
+                                console.log('Установлена стоимость:', total.toFixed(2));
+                            } else {
+                                console.error('Ошибка получения стоимости услуги:', data.message);
+                            }
+                        })
+                        .fail(function(xhr, status, error) {
+                            console.error('Ошибка при запросе стоимости услуги:', error);
+                            console.error('Статус:', status);
+                            console.error('Ответ:', xhr.responseText);
+                        });
+                } else {
+                    $('#WorkTotal').val('');
+                    console.log('Очищено поле стоимости');
+                }
+            }
+            
+            // Обработчики событий для автоматического расчета
+            $('#ServiceCode').on('change', function() {
+                console.log('Изменена услуга:', $(this).val());
+                // Если количество колес не указано
+                if (!$('#WheelCount').val()) {
+                    $('#WheelCount').val(1);
+                }
+                calculateTotal();
+            });
+            
+            $('#WheelCount').on('input change', function() {
+                console.log('Изменено количество колес:', $(this).val());
+                // Пересчитываем только если услуга уже выбрана
+                if ($('#ServiceCode').val()) {
+                    calculateTotal();
+                }
+            });
+            
+            console.log('ServiceCode элемент найден:', $('#ServiceCode').length > 0);
+            console.log('WheelCount элемент найден:', $('#WheelCount').length > 0);
+            console.log('WorkTotal элемент найден:', $('#WorkTotal').length > 0);
+        });
+    </script>
 }

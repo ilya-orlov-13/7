@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ namespace TyreServiceApp.Controllers
     /// Контроллер для управления заказами в системе шиномонтажа.
     /// Обеспечивает CRUD-операции с заказами, включая создание, редактирование, просмотр и удаление.
     /// </summary>
+    [Authorize]
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;

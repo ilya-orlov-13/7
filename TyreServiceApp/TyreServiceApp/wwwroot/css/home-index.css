@@ -1,7 +1,5 @@
 
-    /* Основные стили для анимированных карточек */
     .animated-card {
-        /* Variables */
         --card_radius: 0.75em;
         --card_color: #e8e8e8;
         --card_outline_color: #000000;
@@ -42,7 +40,6 @@
         transform: translateY(0);
     }
 
-    /* Специфичные цвета для карточек */
     .card-clients { --card_outline_color: #212529; --card_color: #f8f9fa; }
     .card-cars { --card_outline_color: #212529; --card_color: #f8f9fa; }
     .card-orders { --card_outline_color: #212529; --card_color: #f8f9fa; }
@@ -51,12 +48,10 @@
     .card-tires { --card_outline_color: #6c757d; --card_color: #e2e3e5; }
     .card-works { --card_outline_color: #6c757d; --card_color: #e2e3e5; }
     
-    /* Новые цвета для блоков */
     .card-stats { --card_outline_color: #232323; --card_color: #fefefe; }
     .card-recent { --card_outline_color: #232323; --card_color: #fefefe; }
     .card-quick { --card_outline_color: #232323; --card_color: #fefefe; }
 
-    /* Для иконок внутри карточек */
     .card-icon {
         font-size: 3rem;
         transition: transform 0.3s ease;
@@ -66,7 +61,6 @@
         transform: scale(1.1);
     }
 
-    /* Стили для заголовков внутри карточек */
     .card-title {
         font-size: 1.25rem;
         font-weight: bold;
@@ -75,9 +69,7 @@
         color: var(--card_outline_color);
     }
 
-    /* Стили для анимированных кнопок */
     .animated-button {
-        /* Variables */
         --button_radius: 0.75em;
         --button_color: #e8e8e8;
         --button_outline_color: #198754;
@@ -114,13 +106,11 @@
         transform: translateY(0);
     }
     
-    /* Цвета для разных кнопок */
     .animated-button:nth-child(1) { --button_outline_color: #198754; --button_color: #d1e7dd; }
     .animated-button:nth-child(2) { --button_outline_color: #0d6efd; --button_color: #cfe2ff; }
     .animated-button:nth-child(3) { --button_outline_color: #6f42c1; --button_color: #e2d9f3; }
     .animated-button:nth-child(4) { --button_outline_color: #fd7e14; --button_color: #ffe5d0; }
 
-    /* Стили для кнопок быстрых действий внутри карточки */
     .action-button {
         display: block;
         text-decoration: none;
@@ -155,7 +145,6 @@
         transform: scale(1.1);
     }
     
-    /* Цвета для иконок */
     .text-purple { color: #6f42c1; }
     .text-success { color: #198754; }
     .text-primary { color: #0d6efd; }
@@ -200,7 +189,6 @@
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
 
-    /* Компактная версия статистики */
     .card-title {
         font-size: 1.1rem;
         margin-bottom: 0.75rem;
@@ -233,14 +221,12 @@
         border-radius: 2px;
     }
 
-    /* Компактные стили для блока статистики */
     .chart-container-sm {
         position: relative;
         height: 120px;
         width: 100%;
     }
 
-    /* Стили для кнопок быстрых действий - КОМПАКТНЫЕ */
     .quick-action-btn {
         display: block;
         border-radius: 0.4rem;
@@ -264,7 +250,6 @@
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
-    /* Компактные прогресс-бары */
     .progress {
         background-color: transparent;
         border-radius: 1px;
@@ -275,7 +260,6 @@
         border-radius: 1px;
     }
 
-    /* Уменьшенные цветовые блоки */
     .color-box {
         border-radius: 2px;
         width: 12px !important;
@@ -284,32 +268,27 @@
         min-height: 12px !important;
     }
 
-    /* Компактные метрики */
     .text-center.border.rounded {
         border-color: #dee2e6 !important;
         background: #f8f9fa;
         padding: 0.25rem !important;
     }
 
-    /* Компактный заголовок статистики */
     .text-uppercase.small {
         letter-spacing: 0.5px;
         color: #495057;
         font-size: 0.8rem;
     }
 
-    /* Уменьшаем паддинги карточек */
     .animated-card-inner.p-2 {
         padding: 0.75rem !important;
     }
 
-    /* Компактные отступы в строках */
     .row.g-1 > [class*="col-"] {
         padding-right: 0.25rem;
         padding-left: 0.25rem;
     }
 
-    /* Уменьшаем размер текста в статистике */
     .quick-action-btn-inner .small {
         font-size: 0.75rem;
         line-height: 1.2;
@@ -319,14 +298,12 @@
         font-size: 1.25rem !important;
     }
 
-    /* Стили для заголовков в быстрых действиях */
     .quick-action-btn-inner .fw-medium {
         font-size: 0.8rem;
         margin-top: 0.25rem;
         margin-bottom: 0;
     }
 
-    /* Компактные стили для таблицы последних заказов */
     .table th,
     .table td {
         padding: 0.5rem;
@@ -342,18 +319,15 @@
         border-bottom: 2px solid #dee2e6;
     }
 
-    /* Уменьшаем отступы в карточке с последними заказами */
     .card-recent .animated-card-inner {
         padding: 1rem !important;
     }
 
-    /* Стили для бейджей */
     .badge {
         font-size: 0.75em;
         padding: 0.25em 0.5em;
     }
 
-    /* Компактные иконки в таблице */
     .table i {
         font-size: 0.9em;
     }
@@ -385,7 +359,6 @@
         }
     }
 
-    /* Еще более компактный вариант для очень маленьких экранов */
     @media (max-width: 576px) {
         .animated-card-inner {
             padding: 0.75rem !important;
@@ -408,7 +381,6 @@
         }
     }
 
-    /* Стили для тултипов на фото автомобилей */
     .car-photo-thumbnail {
         transition: all 0.3s ease;
     }
@@ -430,12 +402,10 @@
         text-decoration: underline;
     }
 
-    /* Стили для тултипов Bootstrap */
     .tooltip {
         font-size: 0.875rem;
     }
 
-    /* Анимация загрузки для диаграммы */
     .chart-container-sm {
         position: relative;
     }
@@ -511,7 +481,6 @@
         }
     }
 
-    /* Стили для high-contrast режима */
     @media (prefers-contrast: high) {
         .animated-card-inner {
             border: 3px solid var(--card_outline_color);
@@ -522,7 +491,6 @@
         }
     }
 
-    /* Стили для уменьшения движения (prefers-reduced-motion) */
     @media (prefers-reduced-motion: reduce) {
         .animated-card,
         .animated-card-inner,
@@ -543,7 +511,6 @@
         }
     }
 
-    /* Стиль таблиц как в Uiverse.io */
 .custom-table-card {
     width: 100%;
     background: rgb(44, 44, 44);
@@ -639,7 +606,6 @@
     justify-content: flex-end;
 }
 
-/* Для таблицы с действиями */
 .custom-table-actions {
     display: flex;
     gap: 5px;
@@ -676,7 +642,6 @@
     background: #dc3545;
 }
 
-/* Стиль для статусов */
 .status-badge {
     display: inline-block;
     padding: 3px 8px;

@@ -3,53 +3,184 @@
     ViewData["Title"] = "Подробности о мастере";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Подробности о мастере</h5>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #000000;
+        --button_color: #e8e8e8;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 0rem;
+        cursor: default;
+        transition: max-width 0.3s ease;
+    }
+
+    @@media (min-width: 992px) {
+        .main-3d-wrapper {
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 30px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modern-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .modern-btn-primary {
+        background-color: #000000;
+        color: white;
+    }
+
+    .modern-btn-primary:hover {
+        background-color: #333333;
+        transform: translateY(-1px);
+    }
+
+    .modern-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .modern-btn-secondary:hover {
+        background-color: #545b62;
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .details-row {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .details-row:last-child {
+        border-bottom: none;
+    }
+
+    .details-label {
+        font-weight: 600;
+        color: #64748b;
+        font-size: 14px;
+        min-width: 160px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .details-value {
+        font-weight: 500;
+        color: #1e293b;
+        font-size: 16px;
+    }
+
+    .rank-badge {
+        background-color: #eff6ff;
+        color: #1d4ed8;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #bfdbfe;
+    }
+
+    .rate-badge {
+        background-color: #f0fdf4;
+        color: #166534;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #bbf7d0;
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
+            
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0">
+                    <i class="bi bi-info-circle me-2"></i> Подробности о мастере
+                </h3>
             </div>
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-person text-dark"></i> ФИО:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.FullName</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-briefcase text-dark"></i> Должность:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.Position</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-star text-dark"></i> Разряд:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <span class="badge bg-info">@Model.Rank разряд</span>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-currency-exchange text-dark"></i> Почасовая ставка:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.HourlyRate ₽/ч</strong>
-                    </dd>
-                </dl>
-            </div>
-            <div class="card-footer bg-light">
-                <div class="d-flex gap-2">
-                    <a asp-action="Edit" asp-route-id="@Model.MasterId" class="btn btn-dark">
-                        <i class="bi bi-pencil"></i> Редактировать
-                    </a>
-                    <a asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Вернуться к списку
-                    </a>
+
+            <!-- Детали мастера -->
+            <div class="mb-4">
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-person"></i> ФИО:
+                    </div>
+                    <div class="details-value">
+                        @Model.FullName
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-briefcase"></i> Должность:
+                    </div>
+                    <div class="details-value">
+                        @Model.Position
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-star"></i> Разряд:
+                    </div>
+                    <div class="details-value">
+                        <span class="rank-badge">@Model.Rank разряд</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-currency-exchange"></i> Почасовая ставка:
+                    </div>
+                    <div class="details-value">
+                        <span class="rate-badge">@Model.HourlyRate ₽/ч</span>
+                    </div>
                 </div>
             </div>
+
+            <!-- Кнопки действий -->
+            <div class="d-flex gap-3 mt-4">
+                <a asp-action="Edit" asp-route-id="@Model.MasterId" class="modern-btn modern-btn-primary">
+                    <i class="bi bi-pencil"></i> Редактировать
+                </a>
+                <a asp-action="Index" class="modern-btn modern-btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Вернуться к списку
+                </a>
+            </div>
+
         </div>
     </div>
 </div>

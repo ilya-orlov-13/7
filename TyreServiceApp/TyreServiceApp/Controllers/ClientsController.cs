@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TyreServiceApp.Data;
@@ -13,6 +14,7 @@ namespace TyreServiceApp.Controllers
     /// Этот контроллер обрабатывает все HTTP-запросы, связанные с клиентами:
     /// просмотр списка, создание, редактирование, просмотр деталей и удаление.
     /// </remarks>
+    [Authorize]
     public class ClientsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -41,7 +43,13 @@ namespace TyreServiceApp.Controllers
         // GET: Clients
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Clients.ToListAsync());
+            // Добавляем Include для загрузки автомобилей
+            var clients = await _context.Clients
+                .Include(c => c.Cars)
+                .OrderBy(c => c.FullName)
+                .ToListAsync();
+            
+            return View(clients);
         }
 
         /// <summary>

@@ -3,105 +3,321 @@
     ViewData["Title"] = "Подробности о шине";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Подробности о шине</h5>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #000000;
+        --button_color: #e8e8e8;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 0rem;
+        cursor: default;
+        transition: max-width 0.3s ease;
+    }
+
+    @@media (min-width: 992px) {
+        .main-3d-wrapper {
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 30px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modern-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .modern-btn-primary {
+        background-color: #000000;
+        color: white;
+    }
+
+    .modern-btn-primary:hover {
+        background-color: #333333;
+        transform: translateY(-1px);
+    }
+
+    .modern-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .modern-btn-secondary:hover {
+        background-color: #545b62;
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .details-row {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .details-row:last-child {
+        border-bottom: none;
+    }
+
+    .details-label {
+        font-weight: 600;
+        color: #64748b;
+        font-size: 14px;
+        min-width: 160px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .details-value {
+        font-weight: 500;
+        color: #1e293b;
+        font-size: 16px;
+    }
+
+    .season-badge {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .season-summer {
+        background-color: #fef3c7;
+        color: #d97706;
+        border: 1px solid #fbbf24;
+    }
+
+    .season-winter {
+        background-color: #dbeafe;
+        color: #1d4ed8;
+        border: 1px solid #60a5fa;
+    }
+
+    .season-all {
+        background-color: #dcfce7;
+        color: #166534;
+        border: 1px solid #4ade80;
+    }
+
+    .season-default {
+        background-color: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+    }
+
+    .size-badge {
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #cbd5e1;
+        font-family: monospace;
+    }
+
+    .wear-badge {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .wear-high {
+        background-color: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fca5a5;
+    }
+
+    .wear-medium {
+        background-color: #fef3c7;
+        color: #d97706;
+        border: 1px solid #fbbf24;
+    }
+
+    .wear-low {
+        background-color: #dcfce7;
+        color: #166534;
+        border: 1px solid #4ade80;
+    }
+
+    .pressure-badge {
+        background-color: #eff6ff;
+        color: #1d4ed8;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #bfdbfe;
+    }
+
+    .car-info {
+        background-color: #f8fafc;
+        color: #334155;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+        border: 1px solid #e2e8f0;
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
+            
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0">
+                    <i class="bi bi-info-circle me-2"></i> Подробности о шине
+                </h3>
             </div>
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-tag text-dark"></i> Тип шины:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.TireType</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-snow text-dark"></i> Сезонность:
-                    </dt>
-                    <dd class="col-sm-8">
+
+            <!-- Детали шины -->
+            <div class="mb-4">
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-tag"></i> Тип шины:
+                    </div>
+                    <div class="details-value">
+                        @Model.TireType
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-snow"></i> Сезонность:
+                    </div>
+                    <div class="details-value">
                         @{
-                            var seasonalityBadge = Model.Seasonality switch
+                            var seasonClass = Model.Seasonality switch
                             {
-                                "Летняя" => "bg-warning",
-                                "Зимняя" => "bg-info",
-                                "Всесезонная" => "bg-success",
-                                _ => "bg-secondary"
+                                "Летняя" => "season-summer",
+                                "Зимняя" => "season-winter",
+                                "Всесезонная" => "season-all",
+                                _ => "season-default"
                             };
                         }
-                        <span class="badge @seasonalityBadge">@Model.Seasonality</span>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-building text-dark"></i> Производитель:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.Manufacturer</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-tag text-dark"></i> Модель шины:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.TireModel</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-rulers text-dark"></i> Размер:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <span class="badge bg-secondary">@Model.Size</span>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-arrow-up text-dark"></i> Индекс нагрузки:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.LoadIndex</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-speedometer text-dark"></i> Износ (%):
-                    </dt>
-                    <dd class="col-sm-8">
+                        <span class="season-badge @seasonClass">@Model.Seasonality</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-building"></i> Производитель:
+                    </div>
+                    <div class="details-value">
+                        @Model.Manufacturer
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-tag"></i> Модель шины:
+                    </div>
+                    <div class="details-value">
+                        @Model.TireModel
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-rulers"></i> Размер:
+                    </div>
+                    <div class="details-value">
+                        <span class="size-badge">@Model.Size</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-arrow-up"></i> Индекс нагрузки:
+                    </div>
+                    <div class="details-value">
+                        @Model.LoadIndex
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-speedometer"></i> Износ (%):
+                    </div>
+                    <div class="details-value">
                         @{
-                            var wearBadge = Model.WearPercentage switch
+                            var wearClass = Model.WearPercentage switch
                             {
-                                >= 80 => "bg-danger",
-                                >= 50 => "bg-warning",
-                                _ => "bg-success"
+                                >= 80 => "wear-high",
+                                >= 50 => "wear-medium",
+                                _ => "wear-low"
                             };
                         }
-                        <span class="badge @wearBadge">@Model.WearPercentage%</span>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-droplet text-dark"></i> Давление:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.Pressure бар</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-car-front text-dark"></i> Автомобиль:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@(Model.Car != null ? $"{Model.Car.Brand} {Model.Car.Model} ({Model.Car.LicensePlate})" : "Не указан")</strong>
-                    </dd>
-                </dl>
-            </div>
-            <div class="card-footer bg-light">
-                <div class="d-flex gap-2">
-                    <a asp-action="Edit" asp-route-id="@Model.TireId" class="btn btn-dark">
-                        <i class="bi bi-pencil"></i> Редактировать
-                    </a>
-                    <a asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Вернуться к списку
-                    </a>
+                        <span class="wear-badge @wearClass">@Model.WearPercentage%</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-droplet"></i> Давление:
+                    </div>
+                    <div class="details-value">
+                        <span class="pressure-badge">@Model.Pressure бар</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-car-front"></i> Автомобиль:
+                    </div>
+                    <div class="details-value">
+                        @if (Model.Car != null)
+                        {
+                            <span class="car-info">@Model.Car.Brand @Model.Car.Model (@Model.Car.LicensePlate)</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Не указан</span>
+                        }
+                    </div>
                 </div>
             </div>
+
+            <!-- Кнопки действий -->
+            <div class="d-flex gap-3 mt-4">
+                <a asp-action="Edit" asp-route-id="@Model.TireId" class="modern-btn modern-btn-primary">
+                    <i class="bi bi-pencil"></i> Редактировать
+                </a>
+                <a asp-action="Index" class="modern-btn modern-btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Вернуться к списку
+                </a>
+            </div>
+
         </div>
     </div>
 </div>

@@ -1,69 +1,678 @@
 @model TyreServiceApp.Models.Car
 @{
     ViewData["Title"] = "Подробности об автомобиле";
+    
+    var allPhotos = new List<string>();
+    if (!string.IsNullOrEmpty(Model.PhotoPath))
+    {
+        allPhotos.Add(Model.PhotoPath);
+    }
+    if (!string.IsNullOrEmpty(Model.AdditionalPhotos))
+    {
+        try
+        {
+            var additionalPhotos = System.Text.Json.JsonSerializer.Deserialize<List<string>>(Model.AdditionalPhotos);
+            if (additionalPhotos != null)
+            {
+                allPhotos.AddRange(additionalPhotos);
+            }
+        }
+        catch
+        {
+        }
+    }
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Подробности об автомобиле</h5>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #000000;
+        --button_color: #e8e8e8;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 0rem;
+        cursor: default;
+        transition: max-width 0.3s ease;
+    }
+
+    @@media (min-width: 992px) {
+        .main-3d-wrapper {
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 30px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modern-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .modern-btn-primary {
+        background-color: #000000;
+        color: white;
+    }
+
+    .modern-btn-primary:hover {
+        background-color: #333333;
+        transform: translateY(-1px);
+    }
+
+    .modern-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .modern-btn-secondary:hover {
+        background-color: #545b62;
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .details-row {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .details-row:last-child {
+        border-bottom: none;
+    }
+
+    .details-label {
+        font-weight: 600;
+        color: #64748b;
+        font-size: 14px;
+        min-width: 180px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .details-value {
+        font-weight: 500;
+        color: #1e293b;
+        font-size: 16px;
+    }
+
+    .brand-badge {
+        background-color: #f8fafc;
+        color: #334155;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #e9d5ff;
+    }
+
+    .model-badge {
+        background-color: #f8fafc;
+        color: #334155;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #e9d5ff;
+    }
+
+    .year-badge {
+        background-color: #f8fafc;
+        color: #334155;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #e9d5ff;
+    }
+
+    .license-badge {
+        background-color: #f8fafc;
+        color: #334155;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        border: 1px solid #e9d5ff;
+        font-size: 18px;
+        font-family: monospace;
+    }
+
+    .vin-badge {
+        background-color: #f8fafc;
+        color: #334155;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #e9d5ff;
+        font-family: monospace;
+    }
+
+    .client-info {
+        background-color: #f8fafc;
+        color: #334155;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-weight: 500;
+        border: 1px solid #e9d5ff;
+    }
+
+    /* Стили для галереи фото */
+    .photo-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .photo-item {
+        position: relative;
+        cursor: pointer;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #f8f9fa;
+    }
+
+    .photo-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .photo-thumbnail {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        transition: opacity 0.2s ease;
+    }
+
+    .photo-item:hover .photo-thumbnail {
+        opacity: 0.9;
+    }
+
+    .photo-badge {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        background-color: rgba(0, 123, 255, 0.9);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Стили для кнопок навигации галереи */
+    .gallery-nav-btn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        background-color: #e5e7eb;
+        border: 3px solid transparent;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin: 0 8px;
+        outline: none;
+    }
+
+    .gallery-nav-btn:hover {
+        transform: translateY(-2px);
+        background-color: #d1d5db;
+    }
+
+    .gallery-nav-btn:active {
+        transform: translateY(2px);
+    }
+
+    .gallery-nav-btn:focus {
+        border-color: transparent;
+        outline: none;
+    }
+
+    .gallery-nav-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    .gallery-nav-btn.prev {
+        transform: rotate(180deg);
+    }
+
+    .gallery-nav-btn.prev:hover {
+        transform: rotate(180deg) translateY(-2px);
+    }
+
+    .gallery-nav-btn.prev:active {
+        transform: rotate(180deg) translateY(2px);
+    }
+
+    .gallery-nav-btn i {
+        font-size: 16px;
+        color: #4b5563;
+        transition: transform 0.2s ease;
+    }
+
+    .photo-counter-text {
+        color: #6b7280;
+        font-weight: 500;
+        font-size: 14px;
+        padding: 8px 16px;
+        background-color: rgba(229, 231, 235, 0.8);
+        border-radius: 20px;
+        border: 1px solid rgba(209, 213, 219, 0.5);
+        backdrop-filter: blur(4px);
+    }
+
+    /* Стили для модального окна галереи */
+    .modal-gallery {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        overflow: hidden;
+    }
+
+    .modal-gallery .modal-header {
+        display: none;
+    }
+
+    .modal-gallery .modal-title {
+        display: none;
+    }
+
+    .modal-gallery .modal-body {
+        background: transparent;
+        position: relative;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .gallery-slide {
+        position: relative;
+        width: 80vw;
+        height: 80vh;
+        max-width: 1000px;
+        max-height: 700px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #000;
+    }
+
+    .gallery-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity 0.6s ease-in-out;
+    }
+
+    .modal-gallery .modal-footer {
+        background: transparent;
+        border: none;
+        position: absolute;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1050;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .modal-backdrop {
+        backdrop-filter: blur(10px);
+        background-color: rgba(0, 0, 0, 0.8) !important;
+    }
+
+    html.modal-open, 
+    body.modal-open {
+        overflow: hidden !important;
+        height: 100vh !important;
+    }
+
+    body.modal-open {
+        padding-right: 0px !important;
+    }
+
+    /* Адаптивность для кнопок */
+    @@media (max-width: 768px) {
+        .gallery-nav-btn {
+            display: none !important;
+        }
+        
+        .photo-counter-text {
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+        
+        .modal-gallery .modal-footer {
+            padding: 16px;
+            bottom: 30px;
+        }
+
+        .gallery-slide {
+            width: 95vw;
+            height: 85vh;
+        }
+    }
+
+    @@media (min-width: 769px) {
+        .gallery-nav-btn {
+            width: 40px;
+            height: 40px;
+            margin: 0 8px;
+        }
+    }
+
+    /* Адаптивность */
+    @@media (max-width: 576px) {
+        .photo-gallery {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+        }
+        
+        .photo-thumbnail {
+            height: 100px;
+        }
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
+            
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0">
+                    <i class="bi bi-car-front-fill me-2"></i> Подробности об автомобиле
+                </h3>
             </div>
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-tag text-dark"></i> Марка:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.Brand</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-tag text-dark"></i> Модель:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.Model</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-calendar text-dark"></i> Год выпуска:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.ManufactureYear</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-123 text-dark"></i> Госномер:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <span class="badge bg-secondary fs-6">@Model.LicensePlate</span>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-upc text-dark"></i> VIN номер:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <code>@Model.Vin</code>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-person text-dark"></i> Клиент:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@(Model.Client?.FullName ?? "Не указан")</strong>
-                    </dd>
-                </dl>
-            </div>
-            <div class="card-footer bg-light">
-                <div class="d-flex gap-2">
-                    <a asp-action="Edit" asp-route-id="@Model.CarId" class="btn btn-dark">
-                        <i class="bi bi-pencil"></i> Редактировать
-                    </a>
-                    <a asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Вернуться к списку
-                    </a>
+
+            <!-- Фотографии автомобиля -->
+            @if (allPhotos.Count > 0)
+            {
+                <div class="mb-4">
+                    <h6 class="text-muted mb-3">
+                        <i class="bi bi-camera text-dark"></i> Фотографии автомобиля (@allPhotos.Count)
+                    </h6>
+                    <div class="photo-gallery">
+                        @for (int i = 0; i < allPhotos.Count; i++)
+                        {
+                            <div class="photo-item" data-bs-toggle="modal" data-bs-target="#photoModal" data-photo-src="@allPhotos[i]" data-photo-index="@i">
+                                <img src="@allPhotos[i]" alt="Фото автомобиля @(i + 1)" class="photo-thumbnail" />
+                            </div>
+                        }
+                    </div>
                 </div>
+            }
+
+            <!-- Детали автомобиля -->
+            <div class="mb-4">
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-tag"></i> Марка:
+                    </div>
+                    <div class="details-value">
+                        <span class="brand-badge">@Model.Brand</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-tag"></i> Модель:
+                    </div>
+                    <div class="details-value">
+                        <span class="model-badge">@Model.Model</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-calendar"></i> Год выпуска:
+                    </div>
+                    <div class="details-value">
+                        <span class="year-badge">@Model.ManufactureYear</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-123"></i> Госномер:
+                    </div>
+                    <div class="details-value">
+                        <span class="license-badge">@Model.LicensePlate</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-upc"></i> VIN номер:
+                    </div>
+                    <div class="details-value">
+                        <span class="vin-badge">@Model.Vin</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-person"></i> Клиент:
+                    </div>
+                    <div class="details-value">
+                        @if (Model.Client != null)
+                        {
+                            <span class="client-info">@Model.Client.FullName</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Не указан</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопки действий -->
+            <div class="d-flex gap-3 mt-4">
+                <a asp-action="Edit" asp-route-id="@Model.CarId" class="modern-btn modern-btn-primary">
+                    <i class="bi bi-pencil"></i> Редактировать
+                </a>
+                <a asp-action="Index" class="modern-btn modern-btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Вернуться к списку
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для фото -->
+<div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content modal-gallery">
+            <div class="modal-header">
+                <h5 class="modal-title text-white" id="photoModalLabel">
+                    <i class="bi bi-images me-2"></i>Галерея автомобиля
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="gallery-slide">
+                    <img id="modalPhoto" src="" alt="Car Photo" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="gallery-nav-btn prev" id="prevPhotoBtn">
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+                <span id="photoCounter" class="photo-counter-text"></span>
+                <button type="button" class="gallery-nav-btn" id="nextPhotoBtn">
+                    <i class="bi bi-arrow-right"></i>
+                </button>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const allPhotos = @Html.Raw(Json.Serialize(allPhotos));
+            let currentPhotoIndex = 0;
+            
+            const photoModal = document.getElementById('photoModal');
+            const modalPhoto = document.getElementById('modalPhoto');
+            const photoCounter = document.getElementById('photoCounter');
+            const prevBtn = document.getElementById('prevPhotoBtn');
+            const nextBtn = document.getElementById('nextPhotoBtn');
+
+            photoModal.addEventListener('show.bs.modal', function (event) {
+                const scrollY = window.scrollY;
+                
+                document.body.style.position = 'fixed';
+                document.body.style.top = `-${scrollY}px`;
+                document.body.style.width = '100%';
+                document.body.style.overflow = 'hidden';
+                
+                document.documentElement.style.overflow = 'hidden';
+                document.documentElement.style.height = '100%';
+                
+                document.body.classList.add('modal-open');
+                document.documentElement.classList.add('modal-open');
+
+                modalPhoto.src = '';
+                currentPhotoIndex = 0;
+                showCurrentPhoto();
+            });
+
+            photoModal.addEventListener('hidden.bs.modal', function () {
+                const scrollY = document.body.style.top;
+                
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.width = '';
+                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
+                document.documentElement.style.height = '';
+                
+                document.body.classList.remove('modal-open');
+                document.documentElement.classList.remove('modal-open');
+                
+                if (scrollY) {
+                    window.scrollTo(0, parseInt(scrollY || '0') * -1);
+                }
+                
+                modalPhoto.src = '';
+            });
+
+            document.querySelectorAll('.photo-item').forEach(function(item) {
+                item.addEventListener('click', function() {
+                    currentPhotoIndex = parseInt(this.getAttribute('data-photo-index'));
+                });
+            });
+
+            function showCurrentPhoto() {
+                if (allPhotos.length === 0) return;
+                
+                modalPhoto.style.opacity = '0.5';
+                
+                const img = new Image();
+                img.onload = function() {
+                    modalPhoto.src = allPhotos[currentPhotoIndex];
+                    modalPhoto.style.opacity = '1';
+                };
+                img.src = allPhotos[currentPhotoIndex];
+                
+                // Обновление счетчика
+                photoCounter.textContent = `${currentPhotoIndex + 1} из ${allPhotos.length}`;
+                
+                if (allPhotos.length <= 1) {
+                    prevBtn.style.display = 'none';
+                    nextBtn.style.display = 'none';
+                    photoCounter.style.display = 'none';
+                } else {
+                    const isMobile = window.innerWidth <= 768;
+                    prevBtn.style.display = isMobile ? 'none' : 'inline-flex';
+                    nextBtn.style.display = isMobile ? 'none' : 'inline-flex';
+                    photoCounter.style.display = 'inline-block';
+                }
+            }
+
+            function nextPhoto() {
+                currentPhotoIndex = (currentPhotoIndex + 1) % allPhotos.length;
+                showCurrentPhoto();
+            }
+
+            function prevPhoto() {
+                currentPhotoIndex = (currentPhotoIndex - 1 + allPhotos.length) % allPhotos.length;
+                showCurrentPhoto();
+            }
+
+            prevBtn.addEventListener('click', prevPhoto);
+            nextBtn.addEventListener('click', nextPhoto);
+
+            photoModal.addEventListener('keydown', function(e) {
+                if (allPhotos.length <= 1) return;
+                if (e.key === 'ArrowLeft') prevPhoto();
+                if (e.key === 'ArrowRight') nextPhoto();
+            });
+
+            photoModal.addEventListener('shown.bs.modal', function() {
+                photoModal.focus();
+            });
+
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            photoModal.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            photoModal.addEventListener('touchend', e => {
+                if (allPhotos.length <= 1) return;
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+
+            function handleSwipe() {
+                const swipeDistance = touchEndX - touchStartX;
+                if (Math.abs(swipeDistance) > 50) {
+                    if (swipeDistance > 0) prevPhoto();
+                    else nextPhoto();
+                }
+            }
+        });
+    </script>
+}

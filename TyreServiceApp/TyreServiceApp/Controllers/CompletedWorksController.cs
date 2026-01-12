@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ namespace TyreServiceApp.Controllers
     /// Контроллер для управления выполненными работами в шиномонтажной мастерской.
     /// Обеспечивает CRUD-операции над записями о выполненных работах, включая связь с заказами, услугами и мастерами.
     /// </summary>
+    [Authorize]
     public class CompletedWorksController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -225,6 +227,24 @@ namespace TyreServiceApp.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        /// <summary>
+        /// API метод для получения стоимости услуги по её коду.
+        /// Используется для автоматического расчета итоговой стоимости работы.
+        /// </summary>
+        /// <param name="serviceCode">Код услуги для получения стоимости.</param>
+        /// <returns>JSON объект со стоимостью услуги или ошибкой.</returns>
+        [HttpGet]
+        public async Task<IActionResult> GetServiceCost(int serviceCode)
+        {
+            var service = await _context.Services.FindAsync(serviceCode);
+            if (service == null)
+            {
+                return Json(new { success = false, message = "Услуга не найдена" });
+            }
+            
+            return Json(new { success = true, cost = service.ServiceCost });
         }
 
         /// <summary>

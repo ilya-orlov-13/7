@@ -4,70 +4,1028 @@
     ViewData["Title"] = "Редактировать заказ";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Редактировать заказ</h5>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #000000;
+        --button_color: #e8e8e8;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 0rem;
+        cursor: default;
+        transition: max-width 0.3s ease;
+    }
+
+    @@media (min-width: 992px) {
+        .main-3d-wrapper {
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 30px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .car-selector-container {
+        margin-bottom: 20px;
+        max-width: 320px;
+    }
+
+    .car-collapsible {
+        background-color: #fafafa;
+        color: #333;
+        cursor: pointer;
+        padding: 12px 16px;
+        width: 100%;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        text-align: left;
+        font-size: 14px;
+        outline: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        min-height: 48px;
+    }
+
+    .car-collapsible:hover {
+        background-color: #f0f0f0;
+        border-color: #000000;
+    }
+
+    .car-collapsible.active {
+        background-color: #f5f5f5;
+        border-color: #000000;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .car-collapsible-text {
+        flex: 1;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .car-collapsible-icon {
+        transition: transform 0.3s ease;
+        font-size: 16px;
+        margin-left: 8px;
+        flex-shrink: 0;
+    }
+
+    .car-collapsible.active .car-collapsible-icon {
+        transform: rotate(180deg);
+    }
+
+    .car-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.35s ease-in-out;
+        border: none;
+        border-radius: 0 0 8px 8px;
+        background: white;
+        box-shadow: none;
+    }
+
+    .car-content.active {
+        border: 2px solid #000000;
+        border-top: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .car-search-container {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        background-color: #f8f9fa;
+    }
+
+    .car-search-input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.2s ease;
+    }
+
+    .car-search-input:focus {
+        border-color: #000000;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .car-options-list {
+        max-height: 240px;
+        overflow-y: auto;
+        background: white;
+    }
+
+    .car-option {
+        padding: 10px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.2s ease;
+    }
+
+    .car-option:hover {
+        background-color: #f8f9fa;
+    }
+
+    .car-option.selected {
+        background-color: #f0f0f0;
+        border-left: 3px solid #000000;
+    }
+
+    .car-option:last-child {
+        border-bottom: none;
+    }
+
+    .car-option-photo {
+        width: 40px;
+        height: 28px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        flex-shrink: 0;
+    }
+
+    .car-option-placeholder {
+        width: 40px;
+        height: 28px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        flex-shrink: 0;
+        font-size: 12px;
+    }
+
+    .car-option-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .car-option-title {
+        font-weight: 600;
+        color: #212529;
+        margin-bottom: 2px;
+        font-size: 13px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .car-option-details {
+        font-size: 11px;
+        color: #6c757d;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .selected-car-display {
+        color: #000000;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .selected-car-photo {
+        width: 24px;
+        height: 16px;
+        object-fit: cover;
+        border-radius: 3px;
+        border: 1px solid #000000;
+    }
+
+    .car-options-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .car-options-list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .car-options-list::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .car-options-list::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    .modern-form-group {
+        margin-bottom: 20px;
+    }
+
+    .modern-form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .modern-form-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background-color: #fff;
+    }
+
+    .modern-form-input:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 14px;
+        background-color: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .modern-form-select:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .modern-btn-primary {
+        background-color: #000000;
+        color: white;
+    }
+
+    .modern-btn-primary:hover {
+        background-color: #333333;
+        transform: translateY(-1px);
+    }
+
+    .modern-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .modern-btn-secondary:hover {
+        background-color: #545b62;
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .form-text-helper {
+        font-size: 12px;
+        color: #6c757d;
+        margin-top: 4px;
+    }
+
+    .validation-error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    #selectedCarId {
+        display: none;
+    }
+
+    /* Стили для календаря */
+    .calendar-container {
+        position: relative;
+        max-width: 280px;
+    }
+
+    .calendar-input {
+        cursor: pointer;
+        background-color: #fff;
+    }
+
+    .calendar-input:focus {
+        cursor: pointer;
+    }
+
+    .calendar-popup {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 280px;
+        background: white;
+        border: 2px solid #000000;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        padding: 16px;
+        margin-top: 4px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+    }
+
+    .calendar-popup.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .calendar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+
+    .calendar-nav-btn {
+        background: none;
+        border: none;
+        padding: 6px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+    }
+
+    .calendar-nav-btn:hover {
+        background-color: #f1f5f9;
+    }
+
+    .calendar-month-year {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .calendar-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+        margin-bottom: 6px;
+    }
+
+    .calendar-weekday {
+        text-align: center;
+        font-size: 10px;
+        font-weight: 500;
+        color: #64748b;
+        padding: 6px 0;
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+    }
+
+    .calendar-day {
+        height: 28px;
+        width: 28px;
+        border: none;
+        background: none;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .calendar-day:hover:not(.empty):not(.today) {
+        background-color: #e2e8f0;
+    }
+
+    .calendar-day.today {
+        background-color: #000000;
+        color: white;
+    }
+
+    .calendar-day.selected {
+        background-color: #0f172a !important;
+        color: white;
+    }
+
+    .calendar-day.empty {
+        cursor: default;
+    }
+
+    .calendar-day.other-month {
+        color: #cbd5e1;
+    }
+
+    /* Стили для выбора времени в календаре */
+    .calendar-time-section {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .calendar-time-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: #64748b;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+
+    .calendar-time-inputs {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .calendar-time-input {
+        width: 40px;
+        height: 28px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 500;
+        background: white;
+        outline: none;
+        transition: border-color 0.2s ease;
+    }
+
+    .calendar-time-input:focus {
+        border-color: #000000;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .calendar-time-separator {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
+            
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0">
+                    Редактировать заказ
+                </h3>
             </div>
-            <div class="card-body">
-                <form asp-action="Edit">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-                    <input type="hidden" asp-for="OrderNumber" />
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="OrderDate" class="form-label fw-semibold">
-                                <i class="bi bi-calendar text-dark"></i> Дата заказа
-                            </label>
-                            <input asp-for="OrderDate" class="form-control" type="datetime-local" />
-                            <span asp-validation-for="OrderDate" class="text-danger small"></span>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="PaymentDate" class="form-label fw-semibold">
-                                <i class="bi bi-credit-card text-dark"></i> Дата оплаты
-                            </label>
-                            <input asp-for="PaymentDate" class="form-control" type="datetime-local" />
-                            <span asp-validation-for="PaymentDate" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="CarId" class="form-label fw-semibold">
-                                <i class="bi bi-car-front text-dark"></i> Автомобиль
-                            </label>
-                            <select asp-for="CarId" class="form-select" asp-items="ViewBag.CarId">
-                                <option value="">-- Выберите автомобиль --</option>
-                            </select>
-                            <span asp-validation-for="CarId" class="text-danger small"></span>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="MasterId" class="form-label fw-semibold">
-                                <i class="bi bi-person-badge text-dark"></i> Ответственный мастер
-                            </label>
-                            <select asp-for="MasterId" class="form-select" asp-items="ViewBag.MasterId">
-                                <option value="">-- Выберите мастера (не обязательно) --</option>
-                            </select>
-                            <span asp-validation-for="MasterId" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex gap-2 mt-4">
-                        <button type="submit" class="btn btn-dark">
-                            <i class="bi bi-save"></i> Сохранить изменения
+
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="alert-danger" role="alert"></div>
+                <input type="hidden" asp-for="OrderNumber" />
+                
+                <!-- Скрытое поле для CarId -->
+                <input asp-for="CarId" type="hidden" id="selectedCarId" />
+                
+                <!-- Выбор автомобиля -->
+                <div class="car-selector-container">
+                    <div class="modern-form-group">
+                        <label class="modern-form-label">
+                            <i class="bi bi-car-front me-1"></i> Выберите автомобиль
+                        </label>
+                        <button type="button" class="car-collapsible" id="carCollapsible">
+                            <div class="car-collapsible-text" id="carCollapsibleText">-- Выберите автомобиль --</div>
+                            <i class="bi bi-chevron-down car-collapsible-icon"></i>
                         </button>
-                        <a asp-action="Index" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Вернуться к списку
-                        </a>
+                        <div class="car-content" id="carContent">
+                            <div class="car-search-container">
+                                <input type="text" 
+                                       class="car-search-input" 
+                                       id="carSearchInput"
+                                       placeholder="Поиск по марке, модели или номеру..." />
+                            </div>
+                            <div class="car-options-list" id="carOptionsList">
+                            </div>
+                        </div>
+                        <span asp-validation-for="CarId" class="validation-error"></span>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <!-- Поля дат -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="modern-form-group">
+                            <label asp-for="OrderDate" class="modern-form-label">
+                                <i class="bi bi-calendar me-1"></i> Дата заказа
+                            </label>
+                            <div class="calendar-container">
+                                <input asp-for="OrderDate" class="modern-form-input calendar-input" type="text" readonly placeholder="Выберите дату заказа" />
+                                <div class="calendar-popup" id="orderDateCalendar">
+                                    <div class="calendar-header">
+                                        <button type="button" class="calendar-nav-btn" id="orderPrevMonth">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </button>
+                                        <h3 class="calendar-month-year" id="orderMonthYear"></h3>
+                                        <button type="button" class="calendar-nav-btn" id="orderNextMonth">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                    <div class="calendar-weekdays">
+                                        <div class="calendar-weekday">Вс</div>
+                                        <div class="calendar-weekday">Пн</div>
+                                        <div class="calendar-weekday">Вт</div>
+                                        <div class="calendar-weekday">Ср</div>
+                                        <div class="calendar-weekday">Чт</div>
+                                        <div class="calendar-weekday">Пт</div>
+                                        <div class="calendar-weekday">Сб</div>
+                                    </div>
+                                    <div class="calendar-grid" id="orderCalendarGrid"></div>
+                                    <div class="calendar-time-section">
+                                        <div class="calendar-time-label">Время:</div>
+                                        <div class="calendar-time-inputs">
+                                            <input type="number" class="calendar-time-input" id="orderHours" min="0" max="23" value="12" />
+                                            <span class="calendar-time-separator">:</span>
+                                            <input type="number" class="calendar-time-input" id="orderMinutes" min="0" max="59" value="00" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span asp-validation-for="OrderDate" class="validation-error"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="modern-form-group">
+                            <label asp-for="PaymentDate" class="modern-form-label">
+                                <i class="bi bi-credit-card me-1"></i> Дата оплаты
+                            </label>
+                            <div class="calendar-container">
+                                <input asp-for="PaymentDate" class="modern-form-input calendar-input" type="text" readonly placeholder="Выберите дату оплаты" />
+                                <div class="calendar-popup" id="paymentDateCalendar">
+                                    <div class="calendar-header">
+                                        <button type="button" class="calendar-nav-btn" id="paymentPrevMonth">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </button>
+                                        <h3 class="calendar-month-year" id="paymentMonthYear"></h3>
+                                        <button type="button" class="calendar-nav-btn" id="paymentNextMonth">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                    <div class="calendar-weekdays">
+                                        <div class="calendar-weekday">Вс</div>
+                                        <div class="calendar-weekday">Пн</div>
+                                        <div class="calendar-weekday">Вт</div>
+                                        <div class="calendar-weekday">Ср</div>
+                                        <div class="calendar-weekday">Чт</div>
+                                        <div class="calendar-weekday">Пт</div>
+                                        <div class="calendar-weekday">Сб</div>
+                                    </div>
+                                    <div class="calendar-grid" id="paymentCalendarGrid"></div>
+                                    <div class="calendar-time-section">
+                                        <div class="calendar-time-label">Время:</div>
+                                        <div class="calendar-time-inputs">
+                                            <input type="number" class="calendar-time-input" id="paymentHours" min="0" max="23" value="12" />
+                                            <span class="calendar-time-separator">:</span>
+                                            <input type="number" class="calendar-time-input" id="paymentMinutes" min="0" max="59" value="00" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span asp-validation-for="PaymentDate" class="validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modern-form-group">
+                    <label asp-for="MasterId" class="modern-form-label">
+                        <i class="bi bi-person-badge me-1"></i> Ответственный мастер
+                    </label>
+                    <select asp-for="MasterId" class="modern-form-select" asp-items="ViewBag.MasterId">
+                        <option value="">-- Выберите мастера (не обязательно) --</option>
+                    </select>
+                    <span asp-validation-for="MasterId" class="validation-error"></span>
+                    <div class="form-text-helper">Если оставить пустым, мастер будет назначен позже</div>
+                </div>
+                
+                <!-- Кнопки действий -->
+                <div class="d-flex gap-2 mt-4 pt-2">
+                    <button type="submit" class="btn btn-dark px-4">
+                        <i class="bi bi-check-lg"></i> Сохранить изменения
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-x-lg"></i> Отмена
+                    </a>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <script>
+        // Данные автомобилей
+        var carsData = @Html.Raw(Json.Serialize(ViewBag.CarsData));
+        
+        // Элементы DOM
+        const carCollapsible = document.getElementById('carCollapsible');
+        const carContent = document.getElementById('carContent');
+        const carCollapsibleText = document.getElementById('carCollapsibleText');
+        const carSearchInput = document.getElementById('carSearchInput');
+        const carOptionsList = document.getElementById('carOptionsList');
+        const selectedCarIdInput = document.getElementById('selectedCarId');
+        
+        let isOpen = false;
+        let selectedCarId = null;
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            // Текущий CarId из модели
+            const currentCarId = parseInt(selectedCarIdInput.value);
+            if (currentCarId && carsData) {
+                const currentCar = carsData.find(car => car.carId === currentCarId);
+                if (currentCar) {
+                    selectedCarId = currentCarId;
+                    updateSelectedCarDisplay(currentCar);
+                }
+            }
+            
+            renderCarOptions(carsData);
+            
+            // Инициализация дат из модели
+            initializeDatesFromModel();
+        });
+        
+        carCollapsible.addEventListener('click', function() {
+            if (isOpen) {
+                closeCarSelector();
+            } else {
+                openCarSelector();
+            }
+        });
+        
+        // Обработчик поиска
+        carSearchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const filteredCars = carsData.filter(car => 
+                car.brand.toLowerCase().includes(searchTerm) ||
+                car.model.toLowerCase().includes(searchTerm) ||
+                car.licensePlate.toLowerCase().includes(searchTerm) ||
+                car.clientName.toLowerCase().includes(searchTerm)
+            );
+            renderCarOptions(filteredCars);
+        });
+        
+        function openCarSelector() {
+            isOpen = true;
+            carCollapsible.classList.add('active');
+            carContent.classList.add('active');
+            carContent.style.maxHeight = carContent.scrollHeight + "px";
+            
+            setTimeout(() => {
+                carSearchInput.focus();
+            }, 100);
+        }
+        
+        function closeCarSelector() {
+            isOpen = false;
+            carCollapsible.classList.remove('active');
+            carContent.classList.remove('active');
+            carContent.style.maxHeight = null;
+        }
+        
+        function renderCarOptions(cars) {
+            carOptionsList.innerHTML = '';
+            
+            if (cars.length === 0) {
+                carOptionsList.innerHTML = '<div class="car-option" style="cursor: default; color: #6c757d;">Автомобили не найдены</div>';
+                return;
+            }
+            
+            cars.forEach(car => {
+                const option = document.createElement('div');
+                option.className = 'car-option';
+                if (selectedCarId === car.carId) {
+                    option.classList.add('selected');
+                }
+                
+                option.innerHTML = `
+                    <div class="car-option-photo-container">
+                        ${car.photoPath && car.photoPath.length > 0 ? 
+                            `<img src="${car.photoPath}" class="car-option-photo" alt="Car photo" />` :
+                            `<div class="car-option-placeholder"><i class="bi bi-car-front"></i></div>`
+                        }
+                    </div>
+                    <div class="car-option-info">
+                        <div class="car-option-title">${car.brand} ${car.model}</div>
+                        <div class="car-option-details">${car.licensePlate} | ${car.clientName}</div>
+                    </div>
+                `;
+                
+                option.addEventListener('click', function() {
+                    selectCar(car);
+                });
+                
+                carOptionsList.appendChild(option);
+            });
+        }
+        
+        function selectCar(car) {
+            selectedCarId = car.carId;
+            selectedCarIdInput.value = car.carId;
+            updateSelectedCarDisplay(car);
+            
+            document.querySelectorAll('.car-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            closeCarSelector();
+        }
+        
+        function updateSelectedCarDisplay(car) {
+            const photoHtml = car.photoPath && car.photoPath.length > 0 ? 
+                `<img src="${car.photoPath}" class="selected-car-photo" alt="Car" />` : '';
+            
+            carCollapsibleText.innerHTML = `
+                <div class="selected-car-display">
+                    ${photoHtml}
+                    <span>${car.brand} ${car.model} (${car.licensePlate})</span>
+                </div>
+            `;
+        }
+        
+        // Закрытие при клике вне элемента
+        document.addEventListener('click', function(event) {
+            if (!carCollapsible.contains(event.target) && !carContent.contains(event.target)) {
+                closeCarSelector();
+            }
+        });
+
+        // Календарь скрипт
+        const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+            "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+
+        // Инициализация календарей
+        initCalendar('order', 'OrderDate');
+        initCalendar('payment', 'PaymentDate');
+
+        function initCalendar(prefix, fieldName) {
+            const input = document.querySelector(`input[name="${fieldName}"]`);
+            const calendar = document.getElementById(`${prefix}DateCalendar`);
+            const monthYearEl = document.getElementById(`${prefix}MonthYear`);
+            const gridEl = document.getElementById(`${prefix}CalendarGrid`);
+            const prevBtn = document.getElementById(`${prefix}PrevMonth`);
+            const nextBtn = document.getElementById(`${prefix}NextMonth`);
+
+            if (!input || !calendar || !monthYearEl || !gridEl || !prevBtn || !nextBtn) {
+                console.error('Calendar elements not found for:', prefix);
+                return;
+            }
+
+            let currentDate = new Date();
+            let selectedDate = null;
+
+            // Показать/скрыть календарь
+            input.addEventListener('click', function() {
+                const allCalendars = document.querySelectorAll('.calendar-popup');
+                allCalendars.forEach(cal => {
+                    if (cal !== calendar) {
+                        cal.classList.remove('active');
+                    }
+                });
+                calendar.classList.toggle('active');
+            });
+
+            // Навигация по месяцам
+            prevBtn.addEventListener('click', function() {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar();
+            });
+
+            nextBtn.addEventListener('click', function() {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar();
+            });
+
+            function renderCalendar() {
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+
+                monthYearEl.textContent = `${monthNames[month]} ${year}`;
+
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                const today = new Date();
+                const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
+
+                gridEl.innerHTML = '';
+
+                // Пустые ячейки для дней до первого дня месяца
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = 'calendar-day empty';
+                    gridEl.appendChild(emptyCell);
+                }
+
+                // Дни месяца
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayCell = document.createElement('button');
+                    dayCell.type = 'button';
+                    dayCell.textContent = day;
+
+                    let classes = 'calendar-day ';
+
+                    const isToday = isCurrentMonth && today.getDate() === day;
+                    const isSelected = selectedDate &&
+                        selectedDate.getDate() === day &&
+                        selectedDate.getMonth() === month &&
+                        selectedDate.getFullYear() === year;
+
+                    if (isSelected) {
+                        classes += 'selected';
+                    } else if (isToday) {
+                        classes += 'today';
+                    }
+
+                    dayCell.className = classes;
+                    dayCell.addEventListener('click', () => selectDate(year, month, day));
+                    gridEl.appendChild(dayCell);
+                }
+            }
+
+            function selectDate(year, month, day) {
+                selectedDate = new Date(year, month, day);
+                
+                const hoursInput = document.getElementById(`${prefix}Hours`);
+                const minutesInput = document.getElementById(`${prefix}Minutes`);
+                
+                const hours = parseInt(hoursInput.value) || 0;
+                const minutes = parseInt(minutesInput.value) || 0;
+                
+                selectedDate.setHours(hours, minutes, 0, 0);
+                
+                const formattedDate = selectedDate.toLocaleDateString('ru-RU');
+                const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                input.value = `${formattedDate} ${formattedTime}`;
+
+                const isoDate = selectedDate.toISOString().slice(0, 16);
+                input.setAttribute('data-value', isoDate);
+
+                renderCalendar();
+                calendar.classList.remove('active');
+            }
+
+            // Обработчики изменения времени
+            const hoursInput = document.getElementById(`${prefix}Hours`);
+            const minutesInput = document.getElementById(`${prefix}Minutes`);
+            
+            if (hoursInput && minutesInput) {
+                hoursInput.addEventListener('input', function() {
+                    let value = parseInt(this.value);
+                    if (value > 23) this.value = 23;
+                    if (value < 0) this.value = 0;
+                    updateTimeInInput();
+                });
+                
+                minutesInput.addEventListener('input', function() {
+                    let value = parseInt(this.value);
+                    if (value > 59) this.value = 59;
+                    if (value < 0) this.value = 0;
+                    updateTimeInInput();
+                });
+                
+                // Функция для обновления времени в поле ввода
+                function updateTimeInInput() {
+                    if (selectedDate) {
+                        const hours = parseInt(hoursInput.value) || 0;
+                        const minutes = parseInt(minutesInput.value) || 0;
+                        
+                        selectedDate.setHours(hours, minutes, 0, 0);
+                        
+                        const formattedDate = selectedDate.toLocaleDateString('ru-RU');
+                        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                        input.value = `${formattedDate} ${formattedTime}`;
+
+                        const isoDate = selectedDate.toISOString().slice(0, 16);
+                        input.setAttribute('data-value', isoDate);
+                    }
+                }
+            }
+
+            // Закрытие при клике вне календаря
+            document.addEventListener('click', function(event) {
+                if (!calendar.contains(event.target) && !input.contains(event.target)) {
+                    calendar.classList.remove('active');
+                }
+            });
+
+            // Инициализация
+            renderCalendar();
+        }
+
+        // Функция для инициализации дат из модели при редактировании
+        function initializeDatesFromModel() {
+            // Инициализация даты заказа
+            const orderDateInput = document.querySelector('input[name="OrderDate"]');
+            if (orderDateInput.value) {
+                const orderDate = new Date(orderDateInput.value);
+                if (!isNaN(orderDate.getTime())) {
+                    const formattedDate = orderDate.toLocaleDateString('ru-RU');
+                    const formattedTime = `${orderDate.getHours().toString().padStart(2, '0')}:${orderDate.getMinutes().toString().padStart(2, '0')}`;
+                    orderDateInput.value = `${formattedDate} ${formattedTime}`;
+                    
+                    const orderHours = document.getElementById('orderHours');
+                    const orderMinutes = document.getElementById('orderMinutes');
+                    if (orderHours) orderHours.value = orderDate.getHours();
+                    if (orderMinutes) orderMinutes.value = orderDate.getMinutes();
+                }
+            }
+
+            // Инициализация даты оплаты
+            const paymentDateInput = document.querySelector('input[name="PaymentDate"]');
+            if (paymentDateInput.value) {
+                const paymentDate = new Date(paymentDateInput.value);
+                if (!isNaN(paymentDate.getTime())) {
+                    const formattedDate = paymentDate.toLocaleDateString('ru-RU');
+                    const formattedTime = `${paymentDate.getHours().toString().padStart(2, '0')}:${paymentDate.getMinutes().toString().padStart(2, '0')}`;
+                    paymentDateInput.value = `${formattedDate} ${formattedTime}`;
+                    
+                    const paymentHours = document.getElementById('paymentHours');
+                    const paymentMinutes = document.getElementById('paymentMinutes');
+                    if (paymentHours) paymentHours.value = paymentDate.getHours();
+                    if (paymentMinutes) paymentMinutes.value = paymentDate.getMinutes();
+                }
+            }
+        }
+
+        // Конвертация даты в правильный формат
+        document.querySelector('form').addEventListener('submit', function() {
+            const orderDateInput = document.querySelector('input[name="OrderDate"]');
+            const paymentDateInput = document.querySelector('input[name="PaymentDate"]');
+
+            if (orderDateInput.getAttribute('data-value')) {
+                orderDateInput.value = orderDateInput.getAttribute('data-value');
+            }
+            if (paymentDateInput.getAttribute('data-value')) {
+                paymentDateInput.value = paymentDateInput.getAttribute('data-value');
+            }
+        });
+    </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

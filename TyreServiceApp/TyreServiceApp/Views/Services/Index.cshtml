@@ -1,67 +1,193 @@
-@* Index.cshtml *@
 @model IEnumerable<TyreServiceApp.Models.Service>
 
 @{
     ViewData["Title"] = "Услуги";
 }
 
-<div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-        <h4 class="mb-0"><i class="bi bi-gear"></i> Список услуг</h4>
-        <a asp-action="Create" class="btn btn-light btn-sm">
-            <i class="bi bi-plus-circle"></i> Добавить услугу
-        </a>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped table-bordered mb-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th>@Html.DisplayNameFor(model => model.ServiceCode)</th>
-                        <th>@Html.DisplayNameFor(model => model.ServiceName)</th>
-                        <th>@Html.DisplayNameFor(model => model.ServiceCost)</th>
-                        <th class="text-center" style="width: 180px;">Действия</th>
-                    </tr>
-                </thead>
-                <tbody>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #000000;
+        --button_color: #e8e8e8;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 0rem;
+        cursor: default;
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 20px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* .main-3d-wrapper:hover .main-3d-inner {
+        transform: translateY(-0.35em);
+    } */
+
+    .uiverse-table {
+        width: 100%;
+        background: white;
+        border: 1px solid rgb(203, 203, 203);
+        border-radius: 8px;
+        overflow: hidden;
+        display: block;
+        margin-top: 15px;
+    }
+
+    .uiverse-table__header {
+        display: flex;
+        background: rgb(60, 60, 60);
+        color: white;
+        border-bottom: 1px solid rgb(203, 203, 203);
+    }
+
+    .uiverse-table__row {
+        display: flex;
+        border-bottom: 1px solid rgb(203, 203, 203);
+        background: white;
+    }
+
+    .uiverse-table__row:nth-child(even) {
+        background: rgb(234, 235, 234);
+    }
+
+    .uiverse-table__row:last-child {
+        border-bottom: none;
+    }
+
+    .uiverse-table__cell {
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        min-height: 60px;
+    }
+
+    .col-code { width: 15%; border-right: 1px solid rgb(203, 203, 203); justify-content: center; }
+    .col-name { width: 50%; border-right: 1px solid rgb(203, 203, 203); }
+    .col-cost { width: 15%; border-right: 1px solid rgb(203, 203, 203); justify-content: center; }
+    .col-actions { width: 20%; justify-content: center; }
+
+    .uiverse-table__header .uiverse-table__cell {
+        font-weight: bold;
+        font-size: 0.9rem;
+        justify-content: center;
+        text-align: center;
+    }
+
+    /* Внутренние стили */
+    .service-code-text { font-weight: bold; font-size: 1rem; color: #212529; }
+    .service-name-text { font-size: 1rem; color: #212529; font-weight: 500; }
+    .service-cost-text { font-weight: bold; font-size: 1.05rem; color: #198754; }
+
+    /* Адаптивность */
+    @@media (max-width: 992px) {
+        .uiverse-table__header { display: none !important; }
+        .uiverse-table__row { flex-direction: column !important; padding: 10px 0; border-bottom: 1px solid rgb(203, 203, 203) !important; }
+        .col-code, .col-name, .col-cost, .col-actions { 
+            width: 100% !important; 
+            border-right: none !important; 
+            border-bottom: 1px solid rgba(203, 203, 203, 0.5); 
+            justify-content: flex-start !important; 
+        }
+        .uiverse-table__cell { min-height: auto !important; padding: 8px 15px !important; }
+        .col-actions { border-bottom: none; justify-content: center !important; }
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
+            
+            <!-- Заголовок и кнопка -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0">
+                    <i class="bi bi-gear-fill me-2"></i> Список услуг
+                </h3>
+                <a asp-action="Create" class="btn btn-dark">
+                    <i class="bi bi-plus-circle me-1"></i> Добавить услугу
+                </a>
+            </div>
+
+            @if (Model.Any())
+            {
+                <div class="uiverse-table">
+                    <!-- Заголовок таблицы -->
+                    <div class="uiverse-table__header">
+                        <div class="uiverse-table__cell col-code">Код</div>
+                        <div class="uiverse-table__cell col-name">Наименование услуги</div>
+                        <div class="uiverse-table__cell col-cost">Стоимость</div>
+                        <div class="uiverse-table__cell col-actions">Действия</div>
+                    </div>
+                    
+                    <!-- Строки с данными -->
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td class="align-middle">
-                                <i class="bi bi-hash text-dark me-2"></i>
-                                <strong>@Html.DisplayFor(modelItem => item.ServiceCode)</strong>
-                            </td>
-                            <td class="align-middle">
-                                <i class="bi bi-tools text-secondary me-2"></i>
-                                @Html.DisplayFor(modelItem => item.ServiceName)
-                            </td>
-                            <td class="align-middle">
-                                <i class="bi bi-currency-exchange text-success me-2"></i>
-                                <strong>@Html.DisplayFor(modelItem => item.ServiceCost) ₽</strong>
-                            </td>
-                            <td class="align-middle">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a asp-action="Details" asp-route-id="@item.ServiceCode" 
-                                       class="btn btn-outline-info" 
-                                       title="Просмотр">
+                        <div class="uiverse-table__row">
+                            <!-- Код услуги -->
+                            <div class="uiverse-table__cell col-code">
+                                <span class="service-code-text">@item.ServiceCode</span>
+                            </div>
+
+                            <!-- Название услуги -->
+                            <div class="uiverse-table__cell col-name">
+                                <div class="service-name-text">
+                                    <i class="bi bi-tools text-secondary me-2"></i>@item.ServiceName
+                                </div>
+                            </div>
+
+                            <!-- Стоимость -->
+                            <div class="uiverse-table__cell col-cost">
+                                <span class="service-cost-text text-success">@item.ServiceCost.ToString("N0") ₽</span>
+                            </div>
+
+                            <!-- Действия -->
+                            <div class="uiverse-table__cell col-actions">
+                                <div class="d-flex justify-content-center gap-2 w-100">
+                                    <a asp-action="Details" asp-route-id="@item.ServiceCode" class="btn btn-outline-info btn-sm">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a asp-action="Edit" asp-route-id="@item.ServiceCode" 
-                                       class="btn btn-outline-primary" 
-                                       title="Редактировать">
+                                    <a asp-action="Edit" asp-route-id="@item.ServiceCode" class="btn btn-outline-primary btn-sm">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a asp-action="Delete" asp-route-id="@item.ServiceCode" 
-                                       class="btn btn-outline-danger" 
-                                       title="Удалить">
+                                    <a asp-action="Delete" asp-route-id="@item.ServiceCode" class="btn btn-outline-danger btn-sm">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </div>
                     }
-                </tbody>
-            </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 border rounded bg-light">
+                    <i class="bi bi-gear text-muted" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3">Услуги не найдены</h4>
+                    <p class="text-muted">Добавьте первую услугу в прайс-лист.</p>
+                </div>
+            }
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+}

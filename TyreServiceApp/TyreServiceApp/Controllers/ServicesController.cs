@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TyreServiceApp.Data;
@@ -9,6 +10,7 @@ namespace TyreServiceApp.Controllers
     /// Контроллер для управления услугами шиномонтажа.
     /// Предоставляет CRUD-операции для работы с услугами.
     /// </summary>
+    [Authorize]
     public class ServicesController : Controller
     {
         private readonly ApplicationDbContext _context;

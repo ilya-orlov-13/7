@@ -1,139 +1,262 @@
-@* Index.cshtml *@
 @model IEnumerable<TyreServiceApp.Models.Order>
 
 @{
     ViewData["Title"] = "Заказы";
 }
 
-<div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-        <h4 class="mb-0"><i class="bi bi-receipt"></i> Список заказов</h4>
-        <a asp-action="Create" class="btn btn-light btn-sm">
-            <i class="bi bi-plus-circle"></i> Создать заказ
-        </a>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped table-bordered mb-0">
-                <thead class="table-dark">
-                    <tr>
-                        <th style="width: 60px;">Фото</th>
-                        <th>@Html.DisplayNameFor(model => model.OrderNumber)</th>
-                        <th>Ответственный мастер</th>
-                        <th>@Html.DisplayNameFor(model => model.OrderDate)</th>
-                        <th>@Html.DisplayNameFor(model => model.CarId)</th>
-                        <th>@Html.DisplayNameFor(model => model.PaymentDate)</th>
-                        <th class="text-center" style="width: 180px;">Действия</th>
-                    </tr>
-                </thead>
-                <tbody>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #000000;
+        --button_color: #e8e8e8;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 0rem;
+        cursor: default;
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 20px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* .main-3d-wrapper:hover .main-3d-inner {
+        transform: translateY(-0.35em);
+    } */
+
+    .uiverse-table {
+        width: 100%;
+        background: white;
+        border: 1px solid rgb(203, 203, 203);
+        border-radius: 8px;
+        overflow: hidden;
+        display: block;
+        margin-top: 15px;
+    }
+
+    .uiverse-table__header {
+        display: flex;
+        background: rgb(60, 60, 60);
+        color: white;
+        border-bottom: 1px solid rgb(203, 203, 203);
+    }
+
+    .uiverse-table__row {
+        display: flex;
+        border-bottom: 1px solid rgb(203, 203, 203);
+        background: white;
+    }
+
+    .uiverse-table__row:nth-child(even) {
+        background: rgb(234, 235, 234);
+    }
+
+    .uiverse-table__row:last-child {
+        border-bottom: none;
+    }
+
+    .uiverse-table__cell {
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        min-height: 75px;
+    }
+
+    .col-photo { width: 8%; justify-content: center; border-right: 1px solid rgb(203, 203, 203); }
+    .col-order-info { width: 17%; border-right: 1px solid rgb(203, 203, 203); }
+    .col-master { width: 25%; border-right: 1px solid rgb(203, 203, 203); }
+    .col-car { width: 15%; border-right: 1px solid rgb(203, 203, 203); justify-content: center; }
+    .col-status { width: 15%; border-right: 1px solid rgb(203, 203, 203); justify-content: center; }
+    .col-actions { width: 20%; justify-content: center; }
+
+    .uiverse-table__header .uiverse-table__cell {
+        font-weight: bold;
+        font-size: 0.85rem;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .order-main-info { display: flex; flex-direction: column; gap: 2px; }
+    .order-num { font-weight: bold; font-size: 1rem; color: #212529; }
+    .order-date { font-size: 0.85rem; color: #6c757d; }
+
+    .master-info { display: flex; flex-direction: column; gap: 2px; }
+    .master-link { text-decoration: none; font-weight: 600; color: #0d6efd; font-size: 0.9rem; }
+    .master-link:hover { text-decoration: underline; }
+    .master-subtext { font-size: 0.75rem; color: #6c757d; line-height: 1.2; }
+
+    .car-photo-sm {
+        width: 50px;
+        height: 35px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    }
+
+    /* Адаптивность */
+    @@media (max-width: 1200px) {
+        .master-subtext { display: none; }
+    }
+
+    @@media (max-width: 992px) {
+        .uiverse-table__header { display: none !important; }
+        .uiverse-table__row { flex-direction: column !important; padding: 10px 0; border-bottom: 2px solid #000 !important; }
+        .col-photo, .col-order-info, .col-master, .col-car, .col-status, .col-actions { 
+            width: 100% !important; 
+            border-right: none !important; 
+            border-bottom: 1px solid rgba(203, 203, 203, 0.5); 
+            justify-content: flex-start !important; 
+        }
+        .uiverse-table__cell { min-height: auto !important; padding: 8px 20px !important; }
+        .col-actions { border-bottom: none; justify-content: center !important; }
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
+            
+            <!-- Заголовок и кнопка -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0">
+                    <i class="bi bi-receipt me-2"></i> Список заказов
+                </h3>
+                <a asp-action="Create" class="btn btn-dark">
+                    Создать заказ
+                </a>
+            </div>
+
+            @if (Model.Any())
+            {
+                <div class="uiverse-table">
+                    <!-- Заголовок таблицы -->
+                    <div class="uiverse-table__header">
+                        <div class="uiverse-table__cell col-photo">Фото</div>
+                        <div class="uiverse-table__cell col-order-info">№ Заказа / Дата</div>
+                        <div class="uiverse-table__cell col-master">Ответственный мастер</div>
+                        <div class="uiverse-table__cell col-car">Автомобиль</div>
+                        <div class="uiverse-table__cell col-status">Оплата</div>
+                        <div class="uiverse-table__cell col-actions">Действия</div>
+                    </div>
+                    
+                    <!-- Строки данных -->
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td class="align-middle text-center">
+                        <div class="uiverse-table__row">
+                            <!-- Фото авто -->
+                            <div class="uiverse-table__cell col-photo">
                                 @if (!string.IsNullOrEmpty(item.Car?.PhotoPath))
                                 {
                                     <img src="@item.Car.PhotoPath" 
-                                         class="car-photo-thumbnail rounded" 
-                                         alt="@item.Car?.Brand @item.Car?.Model"
-                                         style="width: 50px; height: 35px; object-fit: cover;"
+                                         class="car-photo-sm" 
                                          data-bs-toggle="tooltip" 
-                                         data-bs-title="@item.Car?.Brand @item.Car?.Model (@item.Car?.LicensePlate)" />
+                                         title="@item.Car?.Brand @item.Car?.Model (@item.Car?.LicensePlate)" />
                                 }
                                 else
                                 {
-                                    <div class="text-muted" style="width: 50px; height: 35px; line-height: 35px;">
-                                        <i class="bi bi-car-front"></i>
-                                    </div>
+                                    <div class="text-muted"><i class="bi bi-car-front"></i></div>
                                 }
-                            </td>
-                            <td class="align-middle">
-                                <i class="bi bi-hash text-dark me-2"></i>
-                                <strong>@Html.DisplayFor(modelItem => item.OrderNumber)</strong>
-                            </td>
-                            <td class="align-middle">
+                            </div>
+
+                            <!-- Номер и Дата -->
+                            <div class="uiverse-table__cell col-order-info">
+                                <div class="order-main-info">
+                                    <div class="order-num">@item.OrderNumber</div>
+                                    <div class="order-date"><i class="bi bi-calendar3 me-1"></i>@item.OrderDate.ToString("dd.MM.yyyy")</div>
+                                </div>
+                            </div>
+
+                            <!-- Мастер -->
+                            <div class="uiverse-table__cell col-master">
                                 @if (item.Master != null)
                                 {
-                                    <div class="d-flex flex-column">
-                                        <a asp-controller="Masters" 
-                                        asp-action="Details" 
-                                        asp-route-id="@item.Master.MasterId"
-                                        class="text-decoration-none fw-medium">
-                                            <i class="bi bi-person-badge me-1"></i>
-                                            @item.Master.FullName
+                                    <div class="master-info">
+                                        <a asp-controller="Masters" asp-action="Details" asp-route-id="@item.Master.MasterId" class="master-link">
+                                            <i class="bi bi-person-badge me-1"></i>@item.Master.FullName
                                         </a>
-                                        <small class="text-muted">
+                                        <div class="master-subtext">
                                             @item.Master.Position, @item.Master.Rank разряд
-                                            <br />
-                                            Ставка: @item.Master.HourlyRate.ToString("C2")/час
-                                        </small>
+                                        </div>
                                     </div>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-warning text-dark">
-                                        <i class="bi bi-person-x me-1"></i>
-                                        Мастер не назначен
+                                    <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 0.75rem;">
+                                        <i class="bi bi-person-x me-1"></i>Не назначен
                                     </span>
                                 }
-                            </td>
-                            <td class="align-middle">
-                                <i class="bi bi-calendar text-secondary me-2"></i>
-                                @item.OrderDate.ToString("dd.MM.yyyy")
-                            </td>
-                            <td class="align-middle">
-                                <span class="badge bg-secondary">@Html.DisplayFor(modelItem => item.CarId)</span>
-                            </td>
-                            <td class="align-middle">
+                            </div>
+
+                            <!-- Авто ID / Номер -->
+                            <div class="uiverse-table__cell col-car">
+                                <span class="badge bg-secondary px-3 py-2">@item.CarId</span>
+                            </div>
+
+                            <!-- Статус оплаты -->
+                            <div class="uiverse-table__cell col-status">
                                 @if (item.PaymentDate.HasValue)
                                 {
-                                    <span class="badge bg-success">
-                                        <i class="bi bi-check-circle me-1"></i>
-                                        Оплачено @item.PaymentDate.Value.ToString("dd.MM.yyyy")
-                                    </span>
+                                    <div class="text-center">
+                                        <span class="badge bg-success w-100">Оплачено</span>
+                                        <div style="font-size: 0.7rem;" class="text-success mt-1">@item.PaymentDate.Value.ToString("dd.MM.yyyy")</div>
+                                    </div>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-warning text-dark">
-                                        <i class="bi bi-clock me-1"></i>
-                                        Ожидает оплаты
-                                    </span>
+                                    <div class="text-center">
+                                        <span class="badge bg-warning w-100">Ожидает</span>
+                                    </div>
                                 }
-                            </td>
-                            <td class="align-middle">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a asp-action="Details" asp-route-id="@item.OrderNumber" 
-                                       class="btn btn-outline-info" 
-                                       title="Просмотр">
+                            </div>
+
+                            <!-- Действия -->
+                            <div class="uiverse-table__cell col-actions">
+                                <div class="d-flex justify-content-center gap-2 w-100">
+                                    <a asp-action="Details" asp-route-id="@item.OrderNumber" class="btn btn-outline-info btn-sm">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a asp-action="Edit" asp-route-id="@item.OrderNumber" 
-                                       class="btn btn-outline-primary" 
-                                       title="Редактировать">
+                                    <a asp-action="Edit" asp-route-id="@item.OrderNumber" class="btn btn-outline-primary btn-sm">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a asp-action="Delete" asp-route-id="@item.OrderNumber" 
-                                       class="btn btn-outline-danger" 
-                                       title="Удалить">
+                                    <a asp-action="Delete" asp-route-id="@item.OrderNumber" class="btn btn-outline-danger btn-sm">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </div>
                     }
-                </tbody>
-            </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 border rounded bg-light">
+                    <i class="bi bi-receipt text-muted" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3">Заказы не найдены</h4>
+                    <p class="text-muted">Создайте первый заказ, чтобы начать учет работ.</p>
+                </div>
+            }
         </div>
     </div>
 </div>
 
-
 @section Scripts {
     <script>
-        // Инициализация тултипов для фото
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
     </script>
 }

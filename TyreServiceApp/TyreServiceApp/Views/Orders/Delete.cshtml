@@ -4,66 +4,150 @@
     ViewData["Title"] = "Удалить заказ";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow-sm border-danger">
-            <div class="card-header bg-danger text-white">
-                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Удаление заказа</h5>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #000000;
+        --button_color: #e8e8e8;
+        --danger_color: #dc3545;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 1rem;
+        cursor: default;
+        transition: max-width 0.3s ease;
+    }
+
+    @@media (min-width: 992px) {
+        .main-3d-wrapper {
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--danger_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 30px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* .main-3d-wrapper:hover .main-3d-inner {
+        transform: translateY(-0.35em);
+    } */
+
+    .delete-info-list dt {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        margin-top: 10px;
+    }
+
+    .delete-info-list dd {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #212529;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 5px;
+    }
+
+    .warning-box {
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        color: #856404;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
+            
+            <!-- Заголовок -->
+            <div class="mb-4">
+                <h3 class="fw-bold m-0">
+                    <i class="bi bi-trash3 me-2"></i> Удаление заказа
+                </h3>
+                <hr class="mt-3" />
             </div>
-            <div class="card-body">
-                <div class="alert alert-warning" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    <strong>Внимание!</strong> Вы уверены, что хотите удалить этот заказ? Это действие нельзя отменить.
+
+            <!-- Предупреждение -->
+            <div class="warning-box">
+                <i class="bi bi-exclamation-octagon-fill fs-3 me-3"></i>
+                <div>
+                    <strong>Внимание!</strong> Вы действительно хотите удалить этот заказ? 
+                    <div class="small">Это действие необратимо и удалит все связанные данные.</div>
                 </div>
-                
-                <dl class="row mb-0">
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-hash text-dark"></i> Номер заказа:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Html.DisplayFor(model => model.OrderNumber)</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-calendar text-dark"></i> Дата заказа:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-car-front text-dark"></i> Автомобиль:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@(Model.Car != null ? $"{Model.Car.Brand} {Model.Car.Model} ({Model.Car.LicensePlate})" : "Не указан")</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-credit-card text-dark"></i> Дата оплаты:
-                    </dt>
-                    <dd class="col-sm-8">
-                        @if (Model.PaymentDate.HasValue)
-                        {
-                            <strong class="text-success">@Model.PaymentDate.Value.ToString("dd.MM.yyyy HH:mm")</strong>
-                        }
-                        else
-                        {
-                            <strong class="text-warning">Не оплачено</strong>
-                        }
-                    </dd>
-                </dl>
             </div>
-            <div class="card-footer bg-light">
-                <form asp-action="Delete" class="d-flex gap-2">
-                    <input type="hidden" asp-for="OrderNumber" />
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash"></i> Удалить
+
+            <!-- Данные заказа -->
+            <dl class="row delete-info-list mb-4">
+                <dt class="col-sm-4">Номер заказа</dt>
+                <dd class="col-sm-8">#@Html.DisplayFor(model => model.OrderNumber)</dd>
+
+                <dt class="col-sm-4">Дата создания</dt>
+                <dd class="col-sm-8">
+                    <i class="bi bi-calendar-event me-1 text-muted"></i>
+                    @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")
+                </dd>
+
+                <dt class="col-sm-4">Автомобиль</dt>
+                <dd class="col-sm-8">
+                    <i class="bi bi-car-front me-1 text-muted"></i>
+                    @(Model.Car != null ? $"{Model.Car.Brand} {Model.Car.Model} ({Model.Car.LicensePlate})" : "Не указан")
+                </dd>
+
+                <dt class="col-sm-4">Статус оплаты</dt>
+                <dd class="col-sm-8">
+                    @if (Model.PaymentDate.HasValue)
+                    {
+                        <span class="text-success"><i class="bi bi-check-circle me-1"></i>Оплачено</span>
+                    }
+                    else
+                    {
+                        <span class="text-warning"><i class="bi bi-clock me-1"></i>Ожидает оплаты</span>
+                    }
+                </dd>
+            </dl>
+
+            <!-- Кнопки действий -->
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="OrderNumber" />
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger px-4">
+                        <i class="bi bi-trash"></i> Подтвердить удаление
                     </button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Отмена
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                        Отмена
                     </a>
-                </form>
-            </div>
+                </div>
+            </form>
+
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+}

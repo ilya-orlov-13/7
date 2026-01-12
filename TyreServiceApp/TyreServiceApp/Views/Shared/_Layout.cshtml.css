@@ -1,7 +1,4 @@
-﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
-a.navbar-brand {
+﻿a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
@@ -47,7 +44,6 @@ button.accept-policy {
   line-height: 60px;
 }
 
-/* Стили для навигации в стиле Uiverse (дополнение к существующим) */
 .navbar-nav .nav-link {
     padding: 0.5rem 1rem;
     transition: all 0.3s ease;
@@ -74,7 +70,6 @@ button.accept-policy {
     animation: navPulse 0.3s ease;
 }
 
-/* Улучшение отзывчивости */
 @media (max-width: 768px) {
     .navbar-brand {
         font-size: 1.2rem;
@@ -91,7 +86,6 @@ button.accept-policy {
     }
 }
 
-/* Градиентный эффект для активного состояния */
 .customNavBox.active {
     background: linear-gradient(135deg, #2d6737 0%, #34723f 100%);
 }
@@ -102,7 +96,6 @@ button.accept-policy {
     transition: filter 0.2s ease;
 }
 
-/* Улучшение видимости иконок */
 .customNavBox .inner i {
     font-size: 16px;
 }
@@ -113,7 +106,6 @@ button.accept-policy {
     }
 }
 
-/* Адаптация для темной темы */
 body.dark .customNavBox {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -122,7 +114,6 @@ body.dark .customNavBox:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Эффект перехода между страницами */
 .fade-in {
     animation: fadeIn 0.3s ease-in;
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ namespace TyreServiceApp.Controllers
     /// Контроллер для управления шинами в системе шиномонтажа.
     /// Обеспечивает CRUD-операции для сущности Tire.
     /// </summary>
+    [Authorize]
     public class TiresController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -66,9 +68,27 @@ namespace TyreServiceApp.Controllers
         /// </summary>
         /// <returns>Представление с формой создания шины.</returns>
         // GET: Tires/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.CarId = new SelectList(_context.Cars, "CarId", "LicensePlate");
+            // Получаем автомобили с детальной информацией
+            var cars = await _context.Cars
+                .Include(c => c.Client)
+                .Select(c => new
+                {
+                    carId = c.CarId,
+                    displayText = $"{c.Brand} {c.Model} ({c.LicensePlate}) - {c.Client.FullName}",
+                    brand = c.Brand,
+                    model = c.Model,
+                    licensePlate = c.LicensePlate,
+                    photoPath = c.PhotoPath ?? "",
+                    clientName = c.Client.FullName,
+                    vin = c.Vin ?? "без VIN"
+                })
+                .ToListAsync();
+
+            ViewBag.CarId = new SelectList(cars, "carId", "displayText");
+            ViewBag.CarsData = cars;
+            
             return View();
         }
 
@@ -91,7 +111,26 @@ namespace TyreServiceApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.CarId = new SelectList(_context.Cars, "CarId", "LicensePlate", tire.CarId);
+            
+            // При ошибке валидации загружаем данные снова
+            var cars = await _context.Cars
+                .Include(c => c.Client)
+                .Select(c => new
+                {
+                    carId = c.CarId,
+                    displayText = $"{c.Brand} {c.Model} ({c.LicensePlate}) - {c.Client.FullName}",
+                    brand = c.Brand,
+                    model = c.Model,
+                    licensePlate = c.LicensePlate,
+                    photoPath = c.PhotoPath ?? "",
+                    clientName = c.Client.FullName,
+                    vin = c.Vin ?? "без VIN"
+                })
+                .ToListAsync();
+
+            ViewBag.CarId = new SelectList(cars, "carId", "displayText", tire.CarId);
+            ViewBag.CarsData = cars;
+            
             return View(tire);
         }
 
@@ -116,7 +155,26 @@ namespace TyreServiceApp.Controllers
             {
                 return NotFound();
             }
-            ViewBag.CarId = new SelectList(_context.Cars, "CarId", "LicensePlate", tire.CarId);
+            
+            // Получаем автомобили с детальной информацией
+            var cars = await _context.Cars
+                .Include(c => c.Client)
+                .Select(c => new
+                {
+                    carId = c.CarId,
+                    displayText = $"{c.Brand} {c.Model} ({c.LicensePlate}) - {c.Client.FullName}",
+                    brand = c.Brand,
+                    model = c.Model,
+                    licensePlate = c.LicensePlate,
+                    photoPath = c.PhotoPath ?? "",
+                    clientName = c.Client.FullName,
+                    vin = c.Vin ?? "без VIN"
+                })
+                .ToListAsync();
+
+            ViewBag.CarId = new SelectList(cars, "carId", "displayText", tire.CarId);
+            ViewBag.CarsData = cars;
+            
             return View(tire);
         }
 
@@ -160,7 +218,26 @@ namespace TyreServiceApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.CarId = new SelectList(_context.Cars, "CarId", "LicensePlate", tire.CarId);
+            
+            // При ошибке валидации загружаем данные снова
+            var cars = await _context.Cars
+                .Include(c => c.Client)
+                .Select(c => new
+                {
+                    carId = c.CarId,
+                    displayText = $"{c.Brand} {c.Model} ({c.LicensePlate}) - {c.Client.FullName}",
+                    brand = c.Brand,
+                    model = c.Model,
+                    licensePlate = c.LicensePlate,
+                    photoPath = c.PhotoPath ?? "",
+                    clientName = c.Client.FullName,
+                    vin = c.Vin ?? "без VIN"
+                })
+                .ToListAsync();
+
+            ViewBag.CarId = new SelectList(cars, "carId", "displayText", tire.CarId);
+            ViewBag.CarsData = cars;
+            
             return View(tire);
         }
 

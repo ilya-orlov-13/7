@@ -4,73 +4,254 @@
     ViewData["Title"] = "Удалить выполненную работу";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow-sm border-danger">
-            <div class="card-header bg-danger text-white">
-                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Удаление выполненной работы</h5>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #dc2626;
+        --button_color: #e8e8e8;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 0rem;
+        cursor: default;
+        transition: max-width 0.3s ease;
+    }
+
+    @@media (min-width: 992px) {
+        .main-3d-wrapper {
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 30px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modern-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .modern-btn-danger {
+        background-color: #dc2626;
+        color: white;
+    }
+
+    .modern-btn-danger:hover {
+        background-color: #b91c1c;
+        transform: translateY(-1px);
+    }
+
+    .modern-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .modern-btn-secondary:hover {
+        background-color: #545b62;
+        transform: translateY(-1px);
+        color: white;
+        text-decoration: none;
+    }
+
+    .warning-alert {
+        background-color: #fef3c7;
+        border: 2px solid #f59e0b;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .warning-alert-icon {
+        color: #d97706;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .warning-alert-text {
+        color: #92400e;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .details-row {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .details-row:last-child {
+        border-bottom: none;
+    }
+
+    .details-label {
+        font-weight: 600;
+        color: #64748b;
+        font-size: 14px;
+        min-width: 180px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .details-value {
+        font-weight: 500;
+        color: #1e293b;
+        font-size: 16px;
+    }
+
+    .order-badge {
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #cbd5e1;
+        font-family: monospace;
+    }
+
+    .wheel-badge {
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #cbd5e1;
+    }
+
+    .time-badge {
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        border: 1px solid #cbd5e1;
+    }
+
+    .cost-badge {
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        border: 1px solid #cbd5e1;
+        font-size: 18px;
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
+            
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i> Удаление выполненной работы
+                </h3>
             </div>
-            <div class="card-body">
-                <div class="alert alert-warning" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
+
+            <!-- Предупреждение -->
+            <div class="warning-alert">
+                <i class="bi bi-exclamation-triangle-fill warning-alert-icon"></i>
+                <div class="warning-alert-text">
                     <strong>Внимание!</strong> Вы уверены, что хотите удалить эту выполненную работу? Это действие нельзя отменить.
                 </div>
+            </div>
+
+            <!-- Детали выполненной работы -->
+            <div class="mb-4">
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-receipt"></i> Номер заказа:
+                    </div>
+                    <div class="details-value">
+                        <span class="order-badge">@Html.DisplayFor(model => model.OrderNumber)</span>
+                    </div>
+                </div>
                 
-                <dl class="row mb-0">
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-receipt text-dark"></i> Номер заказа:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Html.DisplayFor(model => model.OrderNumber)</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-gear text-dark"></i> Услуга:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@(Model.Service?.ServiceName ?? "Не указана")</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-person-badge text-dark"></i> Мастер:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@(Model.Master?.FullName ?? "Не указан")</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-circle text-dark"></i> Количество колес:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <span class="badge bg-secondary">@Html.DisplayFor(model => model.WheelCount)</span>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-clock text-dark"></i> Время выполнения (мин):
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Html.DisplayFor(model => model.CompletionTimeMin)</strong>
-                    </dd>
-                    
-                    <dt class="col-sm-4 text-muted">
-                        <i class="bi bi-currency-exchange text-dark"></i> Итоговая стоимость:
-                    </dt>
-                    <dd class="col-sm-8">
-                        <strong>@Html.DisplayFor(model => model.WorkTotal) ₽</strong>
-                    </dd>
-                </dl>
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-gear"></i> Услуга:
+                    </div>
+                    <div class="details-value">
+                        @(Model.Service?.ServiceName ?? "Не указана")
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-person-badge"></i> Мастер:
+                    </div>
+                    <div class="details-value">
+                        @(Model.Master?.FullName ?? "Не указан")
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-circle"></i> Количество колес:
+                    </div>
+                    <div class="details-value">
+                        <span class="wheel-badge">@Html.DisplayFor(model => model.WheelCount)</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-clock"></i> Время выполнения:
+                    </div>
+                    <div class="details-value">
+                        <span class="time-badge">@Html.DisplayFor(model => model.CompletionTimeMin) мин</span>
+                    </div>
+                </div>
+                
+                <div class="details-row">
+                    <div class="details-label">
+                        <i class="bi bi-currency-exchange"></i> Итоговая стоимость:
+                    </div>
+                    <div class="details-value">
+                        <span class="cost-badge">@Html.DisplayFor(model => model.WorkTotal) ₽</span>
+                    </div>
+                </div>
             </div>
-            <div class="card-footer bg-light">
-                <form asp-action="Delete" class="d-flex gap-2">
-                    <input type="hidden" asp-for="WorkId" />
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash"></i> Удалить
-                    </button>
-                    <a asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Отмена
-                    </a>
-                </form>
-            </div>
+
+            <!-- Кнопки действий -->
+            <form asp-action="Delete" class="d-flex gap-3 mt-4">
+                <input type="hidden" asp-for="WorkId" />
+                <button type="submit" class="modern-btn modern-btn-danger">
+                    <i class="bi bi-trash"></i> Удалить
+                </button>
+                <a asp-action="Index" class="modern-btn modern-btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Отмена
+                </a>
+            </form>
+
         </div>
     </div>
 </div>

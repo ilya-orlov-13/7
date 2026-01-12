@@ -1,6 +1,5 @@
 /* custom-buttons.css */
 
-/* Базовый стиль элегантной кнопки */
 .boton-elegante {
     padding: 15px 30px;
     border: 2px solid #2c2c2c;
@@ -70,7 +69,6 @@
     min-height: 70px;
 }
 
-/* Цветовые варианты */
 .boton-dark {
     border-color: #2c2c2c;
     background-color: #1a1a1a;
@@ -131,22 +129,18 @@
     background-color: #155e75;
 }
 
-/* Вариант с иконкой слева */
 .boton-icon-left {
     flex-direction: row;
 }
 
-/* Вариант с иконкой справа */
 .boton-icon-right {
     flex-direction: row-reverse;
 }
 
-/* Полная ширина */
 .boton-full {
     width: 100%;
 }
 
-/* Отключенная кнопка */
 .boton-elegante:disabled {
     opacity: 0.5;
     cursor: not-allowed;

@@ -1,270 +1,280 @@
 @model TyreServiceApp.Models.Order
 
 @{
-    ViewData["Title"] = "Подробности о заказе";
+    ViewData["Title"] = "Детали заказа";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-10 col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Подробности о заказе #@Model.OrderNumber</h5>
-                <span class="badge bg-light text-dark">@Model.OrderDate.ToString("dd.MM.yyyy")</span>
-            </div>
+<style>
+    :root {
+        --button_radius: 0.75em;
+        --button_outline_color: #000000;
+        --button_color: #e8e8e8;
+    }
+
+    .main-3d-wrapper {
+        position: relative;
+        background: var(--button_outline_color);
+        border-radius: var(--button_radius);
+        display: block;
+        margin-top: 1rem;
+        cursor: default;
+    }
+
+    @@media (min-width: 992px) {
+        .main-3d-wrapper {
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .main-3d-inner {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        background: white;
+        padding: 30px;
+        transform: translateY(-0.15em);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+/* 
+    .main-3d-wrapper:hover .main-3d-inner {
+        transform: translateY(-0.35em);
+    } */
+
+    .info-section-title {
+        font-weight: bold;
+        color: #212529;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    .info-value {
+        font-weight: 500;
+        color: #212529;
+        margin-bottom: 15px;
+    }
+
+    .uiverse-table {
+        width: 100%;
+        background: white;
+        border: 1px solid rgb(203, 203, 203);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+
+    .uiverse-table__header {
+        display: flex;
+        background: rgb(60, 60, 60);
+        color: white;
+        font-weight: bold;
+        font-size: 0.85rem;
+    }
+
+    .uiverse-table__row {
+        display: flex;
+        border-bottom: 1px solid rgb(203, 203, 203);
+    }
+
+    .uiverse-table__row:nth-child(even) {
+        background: rgb(248, 249, 250);
+    }
+
+    .uiverse-table__cell {
+        padding: 12px;
+        display: flex;
+        align-items: center;
+    }
+
+    .col-service { width: 40%; }
+    .col-wheels { width: 15%; justify-content: center; }
+    .col-total { width: 25%; justify-content: center; font-weight: bold; }
+    .col-time { width: 20%; justify-content: center; }
+
+    .uiverse-table__footer {
+        display: flex;
+        background: #f8f9fa;
+        font-weight: bold;
+        border-top: 2px solid #000;
+    }
+
+    .avatar-circle {
+        width: 45px;
+        height: 45px;
+        background: #212529;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 12px;
+    }
+</style>
+
+<div class="container-fluid pt-2 pb-4">
+    <div class="main-3d-wrapper">
+        <div class="main-3d-inner">
             
-            <div class="card-body">
-                <div class="row">
-                    <!-- Левая колонка: основная информация -->
-                    <div class="col-md-6">
-                        <h6 class="border-bottom pb-2 mb-3">
-                            <i class="bi bi-info-circle me-2"></i> Информация о заказе
-                        </h6>
-                        
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Номер заказа</label>
-                            <div class="fs-5 fw-bold">#@Model.OrderNumber</div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Дата и время заказа</label>
-                            <div class="fs-6">
-                                <i class="bi bi-calendar2-event me-2"></i>
-                                @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Статус оплаты</label>
-                            <div>
-                                @if (Model.PaymentDate.HasValue)
-                                {
-                                    <span class="badge bg-success p-2">
-                                        <i class="bi bi-check-circle me-1"></i>
-                                        Оплачено @Model.PaymentDate.Value.ToString("dd.MM.yyyy HH:mm")
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-warning text-dark p-2">
-                                        <i class="bi bi-clock me-1"></i>
-                                        Ожидает оплаты
-                                    </span>
-                                }
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label text-muted small">Выполнено работ</label>
-                            <div>
-                                @if (Model.CompletedWorks != null && Model.CompletedWorks.Any())
-                                {
-                                    <span class="badge bg-primary">
-                                        @Model.CompletedWorks.Count() работ
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">Нет выполненных работ</span>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Правая колонка: автомобиль и мастер -->
-                    <div class="col-md-6">
-                        <h6 class="border-bottom pb-2 mb-3">
-                            <i class="bi bi-car-front me-2"></i> Автомобиль и мастер
-                        </h6>
-                        
-                        <!-- Автомобиль -->
-                        <div class="mb-4">
-                            <div class="d-flex align-items-center mb-2">
-                                @if (!string.IsNullOrEmpty(Model.Car?.PhotoPath))
-                                {
-                                    <img src="@Model.Car.PhotoPath" 
-                                         class="rounded me-3" 
-                                         style="width: 80px; height: 60px; object-fit: cover;"
-                                         alt="@Model.Car?.Brand" />
-                                }
-                                else
-                                {
-                                    <div class="rounded bg-light d-flex align-items-center justify-content-center me-3" 
-                                         style="width: 80px; height: 60px;">
-                                        <i class="bi bi-car-front fs-4 text-muted"></i>
-                                    </div>
-                                }
-                                <div>
-                                    <div class="fw-bold fs-6">
-                                        @(Model.Car?.Brand ?? "Неизвестно") @(Model.Car?.Model ?? "")
-                                    </div>
-                                    <div class="text-muted">
-                                        Госномер: @(Model.Car?.LicensePlate ?? "не указан")
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            @if (Model.Car?.Client != null)
-                            {
-                                <div class="d-flex align-items-center mt-2">
-                                    <div class="avatar-placeholder bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                         style="width: 40px; height: 40px; font-size: 0.9rem;">
-                                        @Model.Car.Client.FullName?[0]
-                                    </div>
-                                    <div>
-                                        <div class="fw-medium">@Model.Car.Client.FullName</div>
-                                        <small class="text-muted">
-                                            <i class="bi bi-telephone me-1"></i>
-                                            @Model.Car.Client.Phone
-                                        </small>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                        
-                        <!-- Мастер -->
-                        <div>
-                            <label class="form-label text-muted small">Ответственный мастер</label>
-                            <div>
-                                @if (Model.Master != null)
-                                {
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-placeholder bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                             style="width: 50px; height: 50px; font-size: 1.1rem;">
-                                            @Model.Master.FullName?[0]
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold">@Model.Master.FullName</div>
-                                            <div class="text-muted">
-                                                @Model.Master.Position, @Model.Master.Rank разряд
-                                                <br />
-                                                Ставка: @Model.Master.HourlyRate.ToString("C2")/час
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-placeholder bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                             style="width: 50px; height: 50px;">
-                                            <i class="bi bi-person-x fs-5"></i>
-                                        </div>
-                                        <div>
-                                            <div class="fw-bold text-warning">Мастер не назначен</div>
-                                            <small class="text-muted">Назначьте мастера при редактировании заказа</small>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        </div>
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h3 class="fw-bold m-0">Заказ #@Model.OrderNumber</h3>
+                    <div class="text-muted mt-1">
+                        <i class="bi bi-calendar-check me-1"></i> от @Model.OrderDate.ToString("dd MMMM yyyy, HH:mm")
                     </div>
                 </div>
-                
-                <!-- Список выполненных работ -->
+                <div>
+                    @if (Model.PaymentDate.HasValue)
+                    {
+                        <span class="badge bg-success px-3 py-2">
+                            <i class="bi bi-check-circle me-1"></i> Оплачено
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark px-3 py-2">
+                            <i class="bi bi-clock me-1"></i> Ожидает оплаты
+                        </span>
+                    }
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Основная информация -->
+                <div class="col-md-6">
+                    <h6 class="info-section-title">
+                        <i class="bi bi-car-front me-2"></i> Данные автомобиля
+                    </h6>
+                    <div class="d-flex align-items-center mb-3">
+                        @if (!string.IsNullOrEmpty(Model.Car?.PhotoPath))
+                        {
+                            <img src="@Model.Car.PhotoPath" class="rounded border" style="width: 100px; height: 70px; object-fit: cover; margin-right: 15px;" />
+                        }
+                        <div>
+                            <div class="info-label">Автомобиль</div>
+                            <div class="info-value">@(Model.Car?.Brand ?? "—") @(Model.Car?.Model ?? "")</div>
+                            <div class="info-label">Госномер</div>
+                            <div class="info-value"><span class="badge bg-dark">@(Model.Car?.LicensePlate ?? "—")</span></div>
+                        </div>
+                    </div>
+
+                    <div class="info-label">Владелец</div>
+                    <div class="info-value">
+                        <i class="bi bi-person me-1"></i> @(Model.Car?.Client?.FullName ?? "Не указан")
+                        <br />
+                        <small class="text-muted"><i class="bi bi-telephone me-1"></i> @(Model.Car?.Client?.Phone ?? "—")</small>
+                    </div>
+                </div>
+
+                <!-- Мастер -->
+                <div class="col-md-6">
+                    <h6 class="info-section-title">
+                        <i class="bi bi-person-badge me-2"></i> Исполнитель
+                    </h6>
+                    @if (Model.Master != null)
+                    {
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-circle">@Model.Master.FullName?[0]</div>
+                            <div>
+                                <div class="fw-bold">@Model.Master.FullName</div>
+                                <div class="text-muted small">@Model.Master.Position • @Model.Master.Rank разряд</div>
+                                <div class="text-muted small">Ставка: @Model.Master.HourlyRate.ToString("N0") ₽/ч</div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-light border d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle me-2 text-warning"></i>
+                            Мастер еще не назначен
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Список работ -->
+            <div class="mt-4">
+                <h6 class="info-section-title">
+                    <i class="bi bi-tools me-2"></i> Заказ
+                </h6>
+
                 @if (Model.CompletedWorks != null && Model.CompletedWorks.Any())
                 {
-                    <div class="mt-4">
-                        <h6 class="border-bottom pb-2 mb-3">
-                            <i class="bi bi-tools me-2"></i> Выполненные работы
-                        </h6>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-sm table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Услуга</th>
-                                        <th>Кол-во часов</th>
-                                        <th>Кол-во колес</th>
-                                        <th>Итоговая стоимость</th>
-                                        <th>Время выполнения</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var work in Model.CompletedWorks)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @if (work.Service != null)
-                                                {
-                                                    <strong>@work.Service.ServiceName</strong>
-                                                    <br />
-                                                    <small class="text-muted">Код: @work.ServiceCode</small>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">Услуга не найдена</span>
-                                                }
-                                            </td>
-                                            <td>@work.WheelCount шт</td>
-                                            <td>@work.WorkTotal.ToString("C2")</td>
-                                            <td>@work.CompletionTimeMin мин</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                                @if (Model.CompletedWorks.Any())
-                                {
-                                    <tfoot class="table-light">
-                                        <tr>
-                                            <th colspan="3">Итого:</th>
-                                            <th>@Model.CompletedWorks.Sum(w => w.WorkTotal).ToString("C2")</th>
-                                            <th>@Model.CompletedWorks.Sum(w => w.CompletionTimeMin) мин</th>
-                                        </tr>
-                                    </tfoot>
-                                }
-                            </table>
+                    <div class="uiverse-table">
+                        <div class="uiverse-table__header">
+                            <div class="uiverse-table__cell col-service">Услуга</div>
+                            <div class="uiverse-table__cell col-wheels">Колеса</div>
+                            <div class="uiverse-table__cell col-total">Стоимость</div>
+                            <div class="uiverse-table__cell col-time">Время</div>
                         </div>
-                    </div>
-                }
-                
-                <!-- Отсутствие выполненных работ -->
-                @if (Model.CompletedWorks == null || !Model.CompletedWorks.Any())
-                {
-                    <div class="alert alert-info mt-4">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-info-circle fs-4 me-3"></i>
-                            <div>
-                                <h6 class="alert-heading mb-1">Нет выполненных работ</h6>
-                                <p class="mb-0">Для этого заказа еще не добавлены выполненные работы.</p>
+
+                        @foreach (var work in Model.CompletedWorks)
+                        {
+                            <div class="uiverse-table__row">
+                                <div class="uiverse-table__cell col-service">
+                                    <div>
+                                        <div class="fw-bold">@(work.Service?.ServiceName ?? "Услуга")</div>
+                                        <small class="text-muted">Код: @work.ServiceCode</small>
+                                    </div>
+                                </div>
+                                <div class="uiverse-table__cell col-wheels">@work.WheelCount шт.</div>
+                                <div class="uiverse-table__cell col-total">@work.WorkTotal.ToString("N2") ₽</div>
+                                <div class="uiverse-table__cell col-time">@work.CompletionTimeMin мин.</div>
                             </div>
+                        }
+
+                        <div class="uiverse-table__footer">
+                            <div class="uiverse-table__cell col-service">ИТОГО:</div>
+                            <div class="uiverse-table__cell col-wheels"></div>
+                            <div class="uiverse-table__cell col-total text-primary">@Model.CompletedWorks.Sum(w => w.WorkTotal).ToString("N2") ₽</div>
+                            <div class="uiverse-table__cell col-time">@Model.CompletedWorks.Sum(w => w.CompletionTimeMin) мин.</div>
                         </div>
                     </div>
                 }
-            </div>
-            
-            <div class="card-footer bg-light">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <small class="text-muted">
-                            <i class="bi bi-clock-history me-1"></i>
-                            Заказ создан: @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")
-                        </small>
+                else
+                {
+                    <div class="text-center py-4 border rounded bg-light">
+                        <i class="bi bi-journal-x text-muted fs-2"></i>
+                        <p class="text-muted mt-2">Работы по данному заказу еще не зафиксированы.</p>
                     </div>
-                    <div class="d-flex gap-2">
-                        <a asp-action="Edit" asp-route-id="@Model.OrderNumber" class="btn btn-primary">
-                            <i class="bi bi-pencil me-1"></i> Редактировать
-                        </a>
-                        <a asp-action="Index" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-1"></i> К списку заказов
-                        </a>
-                    </div>
-                </div>
+                }
             </div>
+
+            <!-- Кнопки действий -->
+            <div class="d-flex gap-2 mt-5">
+                <a asp-action="Edit" asp-route-id="@Model.OrderNumber" class="btn btn-dark px-4">
+                    <i class="bi bi-pencil-square me-2"></i> Редактировать
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                    <i class="bi bi-arrow-left me-2"></i> К списку заказов
+                </a>
+            </div>
+
         </div>
     </div>
 </div>
 
-<style>
-    .avatar-placeholder {
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .table th {
-        font-weight: 600;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        color: #6c757d;
-    }
-</style>
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+}

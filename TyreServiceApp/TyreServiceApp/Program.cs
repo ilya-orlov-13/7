@@ -1,30 +1,41 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using TyreServiceApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Добавьте службы в контейнер ПОСЛЕ создания builder и ДО builder.Build()
 builder.Services.AddControllersWithViews();
 
-// ВАЖНО: Код регистрации DbContext должен быть здесь:
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 1. Получаем базовую строку подключения без пароля из appsettings.json
-var baseConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Определяем тип базы данных по строке подключения
+if (connectionString.Contains("Server=") || connectionString.Contains("Data Source="))
+{
+    // SQL Server
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(connectionString));
+}
+else
+{
+    // PostgreSQL
+    var dbPassword = builder.Configuration["DbPassword"];
+    var fullConnectionString = $"{connectionString}Password={dbPassword};";
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(fullConnectionString));
+}
 
-// 2. Получаем пароль из секретов
-var dbPassword = builder.Configuration["DbPassword"];
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Auth/Login";
+        options.LogoutPath = "/Auth/Logout";
+        options.AccessDeniedPath = "/Auth/Login";
+        options.ExpireTimeSpan = TimeSpan.FromHours(24);
+        options.SlidingExpiration = true;
+    });
 
-// 3. Собираем полную строку подключения
-var fullConnectionString = $"{baseConnectionString}Password={dbPassword};";
+var app = builder.Build();
 
-// 4. Регистрируем контекст БД (эта строка ДОЛЖНА быть до builder.Build())
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(fullConnectionString));
-
-// Конец регистрации сервисов. Теперь можно строить приложение.
-var app = builder.Build(); // <-- После этой строки добавлять сервисы уже НЕЛЬЗЯ
-
-// Далее настраиваем конвейер HTTP (middleware)
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -34,10 +45,12 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Auth}/{action=Login}/{id?}");
 
 app.Run();
